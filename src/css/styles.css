@@ -1,0 +1,76 @@
+:root{
+  --bg:#0f172a; --card:#0b1220e6; --soft:#1f2937; --text:#e5e7eb; --muted:#94a3b8;
+  --brand:#f472b6; --brand-2:#60a5fa; --accent:#fcd34d;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  color:var(--text);
+  background:radial-gradient(1000px 600px at 10% 10%, #1f1144 0%, transparent 60%),
+             radial-gradient(900px 500px at 90% 10%, #112c55 0%, transparent 60%),
+             linear-gradient(180deg, #0b1022 0%, #0f172a 50%, #0b1022 100%);
+  overflow-x:hidden; scroll-behavior:smooth;
+}
+a{color:inherit}
+header{position:relative; min-height:100dvh; display:grid; place-items:center; padding:72px 16px 32px; text-align:center}
+.halo{position:absolute; inset:0; pointer-events:none}
+.halo::before,.halo::after{content:""; position:absolute; inset:-20%; filter:blur(80px); opacity:.35; mix-blend:screen; background:conic-gradient(from 180deg at 50% 50%, var(--brand), var(--brand-2), var(--accent), var(--brand)); animation:spin 20s linear infinite}
+.halo::after{animation-direction:reverse; opacity:.25}
+@keyframes spin{to{transform:rotate(1turn)}}
+
+.hero{position:relative; z-index:1; max-width:920px; width:100%; background:linear-gradient(180deg, var(--card), #0b1022e6); border:1px solid #334155; border-radius:24px; padding:32px; box-shadow:0 20px 60px #0006; backdrop-filter: blur(6px)}
+.badge{display:inline-flex; gap:8px; align-items:center; padding:8px 12px; border-radius:999px; background:#0b1220; border:1px solid #334155; color:var(--muted); font-size:12px; letter-spacing:.3px}
+h1{font-size:clamp(28px,4vw,44px); margin:12px 0 8px; line-height:1.15}
+.love{background:linear-gradient(90deg,var(--brand),var(--accent)); -webkit-background-clip:text; color:transparent}
+.sub{color:#dbeafe; font-weight:400; margin-top:6px; text-shadow:0 1px 2px #0008}
+
+.cta{display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin:22px 0 6px}
+.btn{padding:12px 16px; border-radius:12px; border:1px solid #334155; background:#0b1220; color:var(--text); font-weight:600; cursor:pointer; transition:transform .08s ease, background .2s ease}
+.btn:hover{transform:translateY(-1px); background:#0f172a}
+.btn.primary{background:linear-gradient(90deg,var(--brand),var(--brand-2)); border:none}
+
+.stats{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:18px}
+.chip{background:#0b1220; border:1px solid #334155; padding:10px 12px; border-radius:10px; color:#cbd5e1; font-size:12px}
+
+.section{max-width:1000px; margin:64px auto; padding:0 16px}
+.card{background:var(--card); border:1px solid #334155; border-radius:20px; padding:24px; backdrop-filter: blur(6px)}
+h2{font-size:clamp(22px,3vw,30px); margin:0 0 14px}
+p{color:#e2e8f0}
+.muted{color:var(--muted)}
+
+.grid{display:grid; gap:16px}
+@media(min-width:720px){.grid.cols-2{grid-template-columns:1fr 1fr}}
+
+.countdown{display:flex; gap:10px; justify-content:center; margin-top:14px}
+.dd{min-width:74px; text-align:center; padding:10px 8px; border-radius:12px; background:#0b1220; border:1px solid #334155}
+.dd b{font-size:22px}
+.dd span{display:block; font-size:11px; color:var(--muted)}
+
+.gallery{display:grid; grid-template-columns:repeat(2,1fr); gap:10px}
+@media(min-width:720px){.gallery{grid-template-columns:repeat(4,1fr)}}
+.gallery figure{position:relative; aspect-ratio:1/1; overflow:hidden; border-radius:14px; border:1px solid #334155}
+.gallery img{width:100%; height:100%; object-fit:cover; filter:saturate(1.05)}
+
+.reasons{display:grid; gap:14px}
+@media(min-width:760px){.reasons{grid-template-columns:repeat(2,1fr)}}
+.reason{position:relative; background:linear-gradient(180deg,#141a2b,#0b1022); border:1px solid #334155; border-radius:16px; padding:16px 16px 16px 54px; box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.reason .num{position:absolute; left:12px; top:12px; width:32px; height:32px; border-radius:999px; display:grid; place-items:center; background:linear-gradient(135deg,var(--brand),var(--brand-2)); font-weight:700; color:#fff; font-size:14px; box-shadow:0 2px 10px rgba(96,165,250,.4)}
+
+.uploader{display:grid; gap:12px}
+@media(min-width:860px){.uploader{grid-template-columns:1fr 2fr}}
+.tool{background:#0b1220; border:1px solid #334155; padding:12px; border-radius:12px}
+.tool label{display:block; color:#cbd5e1; margin-bottom:8px}
+.preview{position:relative; border:1px dashed #334155; border-radius:14px; background:#0b1220; overflow:hidden; min-height:180px}
+.preview.empty::before{content:"Upload foto dulu ya"; position:absolute; inset:0; display:grid; place-items:center; color:#94a3b8}
+.preview>canvas{display:block; width:100%; height:auto; aspect-ratio:16/9}
+
+@media (max-width:520px){
+  .cta .btn{width:100%}
+  .tool{padding:10px}
+  .badge{font-size:11px}
+  .uploader{grid-template-columns:1fr}
+}
+
+footer{padding:36px 16px 80px; text-align:center; color:var(--muted)}
+#confetti,#hearts{position:fixed; inset:0; pointer-events:none}
