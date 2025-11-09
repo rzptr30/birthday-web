@@ -243,3 +243,34 @@ dialog form{ display:flex; gap:10px; justify-content:flex-end; margin-top:10px; 
 
 .btn.primary{ background:linear-gradient(90deg,var(--brand),var(--brand-2)); border:none; }
 .btn.primary:hover{ transform:translateY(-1px); }
+
+
+
+/* ==== Photobooth Result Sizing ==== */
+#resultWrap .preview{
+  max-width: 380px;          /* kecil & konsisten */
+  margin: 8px auto 0;
+}
+#resultWrap .preview canvas{
+  width: 100%;
+  height: auto;
+  display: block;
+}
+/* Batasi ukuran pratinjau hasil 4-frame */
+#frame .preview{ max-width: 360px; margin-inline: auto; }
+#frameCanvas{ display: block; width: 100%; height: auto; aspect-ratio: 1200 / 2133; }
+
+
+/* batasi preview hasil 4-up */
+.result canvas{ 
+  max-width: 360px;   /* atau 320px kalau mau lebih kecil */
+  width: 100%;
+  height: auto;
+  margin: 6px auto;
+  display: block;
+}
+/* Preview hasil 4-frame biar tidak kebesaran */
+#resultWrap .preview canvas#frameCanvas {
+  width: min(360px, 100%) !important;
+  height: auto !important;
+}

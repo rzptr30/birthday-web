@@ -217,6 +217,16 @@ if (letterBody && btnMore) {
 // ========== PHOTO BOOTH – v2 (match HTML: btnCamFlow/btnUploadFlow/boothWrap/uploadWrap) ==========
 const OVERLAY_SRC = CONFIG.overlaySrc;
 const FRAME_PCTS  = CONFIG.frameRects;
+// Rasio aspek jendela frame (pakai slot pertama sebagai patokan)
+const SLOT_ASPECT = FRAME_PCTS[0][2] / FRAME_PCTS[0][3]; // contoh: 88/16.5 ≈ 5.333
+
+// …elemen hasil
+const stripCanvas = document.getElementById('frameCanvas');
+const sctx        = stripCanvas.getContext('2d');
+// bikin hasil lebih halus
+sctx.imageSmoothingEnabled  = true;
+sctx.imageSmoothingQuality  = 'high';
+
 
 // Elemen global hasil
 const frameCanvas = document.getElementById('frameCanvas');
@@ -241,6 +251,86 @@ const btnReset    = document.getElementById('btnReset');
 const btnConfirmCam = document.getElementById('btnConfirmCam');
 const slotGrid    = document.getElementById('slotGrid');
 const slotCanvases = slotGrid ? Array.from(slotGrid.querySelectorAll('canvas.slot')) : [];
+// ===== Overlay panduan di atas video kamera =====
+const camGuide = document.createElement('canvas');
+camGuide.id = 'camGuide';
+Object.assign(cam.parentElement.style, { position:'relative' });
+Object.assign(camGuide.style, { position:'absolute', inset:'0', pointerEvents:'none' });
+cam.parentElement.appendChild(camGuide);
+
+function syncGuideSize(){
+  const dpr = Math.min(window.devicePixelRatio||1, 1.5);
+  const box = cam.getBoundingClientRect();
+  camGuide.width  = Math.max(2, Math.floor(box.width  * dpr));
+  camGuide.height = Math.max(2, Math.floor(box.height * dpr));
+  camGuide.style.width  = box.width + 'px';
+  camGuide.style.height = box.height + 'px';
+  drawGuide(); // gambar ulang garis bantu
+}
+
+function drawGuide(countNum){
+  const g = camGuide.getContext('2d');
+  const W = camGuide.width, H = camGuide.height;
+  g.clearRect(0,0,W,H);
+
+  // Fraksi tinggi yang akan terlihat ketika foto (dari 3:4/16:9) dipaksa masuk slot ultra-wide
+  const rv = (cam.videoWidth && cam.videoHeight) ? (cam.videoWidth/cam.videoHeight) : (W/H);
+  const bandFrac = Math.min(1, rv / SLOT_ASPECT);          // = r_src / r_dest
+  const bandH    = H * bandFrac;
+  const topY     = (H - bandH) / 2;
+  const botY     = topY + bandH;
+
+  // Bayangi area yang TIDAK akan terlihat di frame
+  g.fillStyle = 'rgba(0,0,0,.45)';
+  g.fillRect(0, 0, W, topY);
+  g.fillRect(0, botY, W, H-botY);
+
+  // Garis batas
+  g.strokeStyle = 'rgba(255,255,255,.9)';
+  g.lineWidth = Math.max(2, W*0.004);
+  g.beginPath(); g.moveTo(0, topY); g.lineTo(W, topY); g.stroke();
+  g.beginPath(); g.moveTo(0, botY); g.lineTo(W, botY); g.stroke();
+
+  // Label
+  g.fillStyle = 'rgba(255,255,255,.9)';
+  g.font = `bold ${Math.max(14, W*0.03)}px Poppins, sans-serif`;
+  g.textAlign='center';
+  g.fillText('Area yang akan terlihat di frame', W/2, Math.max(topY-8, 20));
+
+  // Countdown (jika ada)
+  if (Number.isFinite(countNum)) {
+    g.fillStyle = 'rgba(0,0,0,.5)';
+    g.fillRect(0,0,W,H);
+    g.fillStyle = '#fff';
+    g.font = `900 ${Math.max(40, W*0.18)}px Poppins, sans-serif`;
+    g.fillText(String(countNum), W/2, H/2 + Math.max(40, W*0.06));
+  }
+}
+
+window.addEventListener('resize', syncGuideSize);
+cam.addEventListener('loadedmetadata', syncGuideSize);
+
+
+// ===== Timer pemotretan =====
+const shotTimerSel = document.createElement('select');
+shotTimerSel.id = 'shotTimer';
+['0','3','5','10'].forEach(s=>{
+  const opt = document.createElement('option');
+  opt.value = s; opt.textContent = `Timer ${s}s`;
+  shotTimerSel.appendChild(opt);
+});
+// sisipkan sebelum tombol Ambil Foto
+btnShot.insertAdjacentElement('beforebegin', shotTimerSel);
+
+function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+async function doCountdown(sec){
+  sec = Number(sec||0);
+  if (sec<=0) return;
+  for (let i=sec;i>0;--i){ drawGuide(i); await wait(1000); }
+  drawGuide(); // bersihkan angka
+}
+
+
 
 // Flow upload
 const uploadWrap  = document.getElementById('uploadWrap');
@@ -352,26 +442,50 @@ slotGrid?.addEventListener('click',e=>{
 
 btnStartCam?.addEventListener('click', startCam);
 
-btnShot?.addEventListener('click', ()=>{
-  if(!stream || !cam.videoWidth) return;
-  // tangkap frame ~3:4
-  const off = document.createElement('canvas'); off.width=720; off.height=960;
+btnShot.addEventListener('click', async ()=>{
+  if (!camStream || !cam.videoWidth) return;
+
+  // Countdown sesuai pilihan
+  await doCountdown(shotTimerSel.value);
+
+  // Ambil frame DENGAN ASPEK SLOT (match ke jendela frame)
+  const CAPW = 1280;                                  // lebar bebas
+  const CAPH = Math.round(CAPW / SLOT_ASPECT);        // tinggi dihitung dari rasio slot
+  const off = document.createElement('canvas');
+  off.width = CAPW; off.height = CAPH;
   const ox = off.getContext('2d');
-  // cover fit dari video ke 3:4
-  const iw=cam.videoWidth, ih=cam.videoHeight;
-  const s=Math.max(off.width/iw, off.height/ih);
-  const dw=iw*s, dh=ih*s, dx=(off.width-dw)/2, dy=(off.height-dh)/2;
-  ox.drawImage(cam, dx,dy,dw,dh);
-  const url = off.toDataURL('image/png');
+  ox.imageSmoothingEnabled = true;
+  ox.imageSmoothingQuality = 'high';
+
+  // cover-fit video → kanvas ultra-wide (crop atas/bawah persis seperti guide)
+  coverDraw(ox, cam, 0, 0, CAPW, CAPH);
+  const dataURL = off.toDataURL('image/png');
+
+  let idx = (selectedIndex!=null) ? selectedIndex : nextEmptyIndex();
+  if (idx === -1) idx = 3; // penuh → timpa slot terakhir
+
   const im = new Image();
   im.onload = ()=>{
-    images[activeIndex] = im;
-    coverDrawTo(slotCanvases[activeIndex], im);
-    markActive(activeIndex);
-    if (images.every(Boolean)) enable(btnConfirmCam);
+    images[idx] = im;
+
+    // render thumbnail ke kanvas slot (punya class="slot")
+    const c = slotCanvases[idx];
+    if (c){
+      const cx = c.getContext('2d');
+      cx.clearRect(0,0,c.width,c.height);
+      coverDraw(cx, im, 0, 0, c.width, c.height);
+    }
+
+    // enable tombol lanjut kalau 4 slot sudah terisi
+    btnConfirmCam.disabled = !images.every(Boolean);
+
+    // reset seleksi
+    selectedIndex = null;
+    slotCanvases.forEach(x=>x.classList.remove('selected'));
   };
-  im.src = url;
+  im.src = dataURL;
 });
+
 
 btnNext?.addEventListener('click', ()=>{
   activeIndex = (activeIndex+1) % 4; markActive(activeIndex);
@@ -444,7 +558,16 @@ function confirmProceed(){
 }
 
 function composeStrip(){
-  if (!overlayReady){ showToast('Template belum siap dimuat. Coba lagi sebentar.'); return; }
+  if (!overlayReady){ alert('Template belum siap dimuat. Coba lagi sebentar.'); return; }
+  sctx.imageSmoothingEnabled = true;
+  sctx.imageSmoothingQuality = 'high';
+
+  sctx.clearRect(0,0,stripCanvas.width, stripCanvas.height);
+  FRAME_PCTS.forEach((prc, i)=>{
+    const [x,y,w,h] = rectPxFromPercent(prc);
+    coverDraw(sctx, images[i], x,y,w,h);
+  });
+  sctx.drawImage(overlayImg, 0,0, stripCanvas.width, stripCanvas.height);
   // gambar foto
   fctx.clearRect(0,0,frameCanvas.width,frameCanvas.height);
   FRAME_PCTS.forEach((prc,i)=>{
