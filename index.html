@@ -3,21 +3,34 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Happy Birthday, Adellia!🫶🏻🎂✨</title>
+  <title>Happy Birthday, Adellia! 🫶🏻🎂✨</title>
   <meta name="description" content="Situs mini untuk merayakan ulang tahun kamu. Dibuat penuh cinta 💖" />
 
+  <!-- Fonts & CSS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-  <!-- CSS eksternal -->
-  <link rel="stylesheet" href="src/css/styles.css">
+  <!-- perbaikan path CSS -->
+  <link rel="stylesheet" href="./src/css/styles.css">
 </head>
 <body>
-  <!-- efek -->
-  <canvas id="confetti"></canvas>
-  <canvas id="hearts"></canvas>
 
+  <!-- Modal Konfirmasi -->
+<div id="confirmationModal" class="modal hidden">
+  <div class="modal-content">
+    <p>Apakah kamu yakin ingin mengambil gambar?</p>
+    <button id="btnConfirm" class="btn">OK</button>
+    <button id="btnCancel" class="btn">Cancel</button>
+  </div>
+</div>
+
+<!-- Timer Countdown -->
+<div id="timer" class="timer hidden">00:00</div>
+
+
+
+  <!-- ===== HERO ===== -->
   <header>
     <div class="halo" aria-hidden="true"></div>
     <div class="hero" role="banner">
@@ -29,8 +42,11 @@
 
       <div class="cta">
         <button class="btn primary" id="btnPlay">▶️ Putar Musik</button>
-        <button class="btn" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Lihat Kenangan 📷</button>
-        <button class="btn" id="btnConfetti">Semprot Konfeti 🎊</button>
+        <!-- Tombol Lihat Kenangan diganti menjadi Kenangan Kita -->
+        <button class="btn" onclick="document.getElementById('pastMemories').scrollIntoView({behavior:'smooth'})">Kenangan Kita 📷</button>
+        <!-- Shortcut untuk langsung ke photo booth -->
+        <button class="btn primary" id="btnGoToBooth">Mulai Foto Booth 📸</button>
+
       </div>
 
       <div class="stats">
@@ -41,6 +57,7 @@
   </header>
 
   <main>
+    <!-- ===== ABOUT ===== -->
     <section class="section" id="about">
       <div class="card grid cols-2">
         <div>
@@ -57,14 +74,29 @@
       </div>
     </section>
 
-    <section class="section" id="gallery">
-      <div class="card">
-        <h2>Galeri Kenangan</h2>
-        <p>Pilih 6–12 foto favorit kalian. Taruh di folder <code>assets/gallery</code>.</p>
-        <div class="gallery" id="gal"></div>
-      </div>
-    </section>
 
+    <!-- ===== KENANGAN YANG SUDAH LEWAT ===== -->
+<section class="section" id="pastMemories">
+  <div class="card">
+    <h2>Kenangan Kita</h2>
+    <div class="memories-container">
+      <!-- Memory 1 -->
+      <div class="memory-item">
+        <img src="assets/kenangan1.jpg" alt="Kenangan 1">
+        <p>Ini adalah kenangan indah pertama kita. Waktu itu, kita bersama di tempat yang sangat spesial.</p>
+      </div>
+      <!-- Memory 2 -->
+      <div class="memory-item">
+        <img src="assets/kenangan2.jpg" alt="Kenangan 2">
+        <p>Kenangan kedua, saat kita merayakan hal-hal kecil bersama. Momen ini sangat berkesan di hati.</p>
+      </div>
+      <!-- Tambahkan lebih banyak kenangan jika diperlukan -->
+    </div>
+  </div>
+</section>
+
+
+    <!-- ===== REASONS ===== -->
     <section class="section" id="reasons">
       <div class="card">
         <h2>10 Hal yang Aku Suka dari Kamu 💗</h2>
@@ -72,93 +104,114 @@
       </div>
     </section>
 
-    <!-- ====== Abadikan Momen (4-up, overlay) ====== -->
+    <!-- ===== ABADIKAN MOMEN – 3 FRAME ===== -->
     <section class="section" id="frame">
       <div class="card">
-        <h2>Abadikan Momen Ini 📸</h2>
+        <h2>Abadikan Momen 📸</h2>
+        <p class="muted">Ambil foto via kamera atau unggah 3 foto, lalu gabungkan ke template.</p>
 
-        <!-- PILIHAN AWAL -->
-        <div id="choiceRow" class="choices" style="margin-top:10px">
+        <!-- Pilihan alur -->
+        <div class="choices" id="choiceRow">
           <button class="btn primary" id="btnCamFlow">Ambil Foto (Kamera)</button>
-          <button class="btn primary" id="btnUploadFlow">Upload 4 Foto</button>
+          <button class="btn" id="btnUploadFlow">Upload 3 Foto</button>
         </div>
 
-        <!-- FLOW KAMERA -->
-        <div id="boothWrap" class="booth hidden" aria-hidden="true">
+        <!-- —— FLOW KAMERA —— -->
+        <section id="boothWrap" class="booth hidden" aria-hidden="true">
           <div class="booth-left">
-            <video id="cam" playsinline autoplay muted></video>
+            <div class="video-box">
+              <video id="cam" playsinline autoplay muted></video>
+              <!-- canvas panduan (id: camGuide) dibuat via JS -->
+            </div>
+
             <div class="booth-ctrl">
               <button class="btn primary" id="btnStartCam">Nyalakan Kamera</button>
-              <button class="btn" id="btnShot" disabled>Ambil Foto (slot aktif)</button>
-              <button class="btn" id="btnNext" disabled>Slot Berikutnya ➜</button>
-              <button class="btn" id="btnRetry" disabled>Retake Slot Aktif</button>
+
+              <div class="timer-row">
+                <label for="shotTimer" class="muted">Timer:</label>
+                <select id="shotTimer" class="btn btn-ghost">
+                  <option value="0">Off</option>
+                  <option value="3">3s</option>
+                  <option value="5" selected>5s</option>
+                  <option value="10">10s</option>
+                </select>
+              </div>
+
+              <button class="btn" id="btnShot" disabled>Ambil Foto</button>
               <button class="btn" id="btnReset" disabled>Reset</button>
               <button class="btn" id="btnConfirmCam" disabled>Lanjutkan</button>
             </div>
           </div>
+
           <div class="booth-right">
             <div id="slotGrid" class="thumbs">
-              <canvas class="slot" data-i="0" width="240" height="320"></canvas>
-              <canvas class="slot" data-i="1" width="240" height="320"></canvas>
-              <canvas class="slot" data-i="2" width="240" height="320"></canvas>
-              <canvas class="slot" data-i="3" width="240" height="320"></canvas>
+              <canvas class="slot" data-i="0" width="240" height="176"></canvas>
+              <canvas class="slot" data-i="1" width="240" height="176"></canvas>
+              <canvas class="slot" data-i="2" width="240" height="176"></canvas>
             </div>
-            <p class="muted">Klik slot untuk memilih yang mau di-retake.</p>
+            <p class="muted small">Klik salah satu foto untuk mengganti (retake) jika perlu.</p>
           </div>
-        </div>
+        </section>
 
-        <!-- FLOW UPLOAD 4 -->
-        <div id="uploadWrap" class="booth hidden" aria-hidden="true">
+        <!-- —— FLOW UPLOAD —— -->
+        <section id="uploadWrap" class="booth hidden" aria-hidden="true">
           <div class="booth-left">
-            <input type="file" id="files4" accept="image/*" multiple />
+            <input type="file" id="files3" accept="image/*" multiple />
             <div class="booth-ctrl">
               <button class="btn" id="btnClearUpload">Bersihkan Pilihan</button>
-              <button class="btn" id="btnConfirmUpload" disabled>Lanjutkan</button>
+              <button class="btn primary" id="btnConfirmUpload" disabled>Lanjutkan</button>
             </div>
           </div>
           <div class="booth-right">
             <div id="uploadGrid" class="thumbs">
-              <canvas class="upslot" data-i="0" width="240" height="320"></canvas>
-              <canvas class="upslot" data-i="1" width="240" height="320"></canvas>
-              <canvas class="upslot" data-i="2" width="240" height="320"></canvas>
-              <canvas class="upslot" data-i="3" width="240" height="320"></canvas>
+              <canvas class="upslot" data-i="0" width="240" height="176"></canvas>
+              <canvas class="upslot" data-i="1" width="240" height="176"></canvas>
+              <canvas class="upslot" data-i="2" width="240" height="176"></canvas>
             </div>
-            <p class="muted">Pilih tepat 4 foto. Klik salah satu slot untuk mengganti.</p>
+            <p class="muted small">Pilih tepat <b>3</b> foto. Klik slot untuk mengganti satu foto.</p>
           </div>
-        </div>
+        </section>
 
-        <!-- DIALOG KONFIRMASI -->
+        <!-- Dialog konfirmasi -->
         <dialog id="confirmDlg">
-          <p style="margin:0 0 12px">Sudah yakin dengan pilihan fotonya?</p>
+          <p>Sudah yakin dengan pilihan fotonya?</p>
           <form method="dialog">
             <button class="btn">Batal</button>
             <button class="btn primary" value="ok">Ya, lanjut</button>
           </form>
         </dialog>
 
-        <!-- HASIL AKHIR -->
-        <div id="resultWrap" class="result hidden">
-          <div class="preview" id="framePreview">
-            <canvas id="frameCanvas" width="1200" height="2133" aria-label="hasil 4-slot"></canvas>
+        <!-- Hasil komposit -->
+        <section id="resultWrap" class="result hidden" aria-hidden="true">
+          <div class="preview">
+            <canvas id="frameCanvas" aria-label="hasil 3-frame"></canvas>
           </div>
           <div class="booth-ctrl">
-            <a class="btn primary" id="btnDownload" download="moment-4frame.png" href="#" style="opacity:.6;pointer-events:none">Download</a>
-            <button class="btn" id="btnBackChoose">Kembali ke Pilihan</button>
+            <a class="btn primary" id="btnDownload" download="moment-3frame.png" href="#" style="opacity:.6;pointer-events:none">Download</a>
+            <button class="btn" id="btnBackChoose">Kembali</button>
           </div>
-          <p class="muted">Template overlay: <code>assets/overlays/Template-Foto.png</code> (area jendela harus transparan).</p>
-        </div>
+          <p class="muted small">Template: <code>assets/overlays/Template-Foto.png</code> (area hitam transparan).</p>
+        </section>
       </div>
     </section>
 
-    <!-- ====== SURAT (dikembalikan) ====== -->
-    <section class="section" id="letter">
-      <div class="card">
-        <h2>Surat untuk Masa Depan ✉️</h2>
-        <p>Aku pengin kita baca ini lagi suatu hari nanti.</p>
-        <div id="letterBody"></div>
-        <button class="btn" id="btnMore">Buka Paragraf Berikutnya ➜</button>
-      </div>
-    </section>
+<!-- Ucapan ulang tahun yang bisa diklik -->
+<section class="section" id="letter">
+  <div class="card">
+    <h2>Ucapan Ulang Tahun 🎉</h2>
+    <p class="clickable" id="birthdayMessage">Klik untuk melihat ucapan spesial dari aku! 🎂</p>
+  </div>
+</section>
+
+<!-- Dialog Ucapan -->
+<dialog id="birthdayDialog">
+  <div class="dialog-content">
+    <p>Selamat ulang tahun, Sayang! 🎉 Semoga hari ini penuh kebahagiaan, dan tahun yang akan datang membawa semua impianmu menjadi kenyataan. Aku sangat bersyukur bisa merayakan hari ini denganmu. Cinta selalu! ❤️</p>
+    <button id="btnCopy" class="btn">Salin Ucapan</button>
+    <button id="btnCloseDialog" class="btn">Tutup</button>
+  </div>
+</dialog>
+
   </main>
 
   <footer> Dibuat dengan ❤️ </footer>
@@ -166,7 +219,7 @@
   <!-- audio -->
   <audio id="bgm" preload="auto" loop src="assets/audio/penjaga-hati.mp3"></audio>
 
-  <!-- Gate tunggal: tanggal spesial -->
+  <!-- Gate (tanggal spesial) -->
   <div id="gate" style="position:fixed;inset:0;background:#0b1022;display:none;align-items:center;justify-content:center;z-index:9999">
     <div class="card" style="max-width:420px;margin:16px;text-align:center">
       <h2>Hi, ini khusus buat kamu 💞</h2>
@@ -179,7 +232,7 @@
     </div>
   </div>
 
-  <!-- JS eksternal -->
-  <script defer src="src/js/main.js"></script>
+  <!-- perbaikan path JS -->
+  <script src="./src/js/main.js" defer></script>
 </body>
 </html>

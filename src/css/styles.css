@@ -6,7 +6,7 @@
 *{ box-sizing:border-box }
 html,body{ height:100% }
 
-/* ===== Background foto fixed (tanpa gradasi warna) ===== */
+/* ===== Background foto fixed ===== */
 body{
   margin:0;
   font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
@@ -14,24 +14,16 @@ body{
   overflow-x:hidden;
   scroll-behavior:smooth;
   position:relative;
-  background:none; /* matikan background gradien lama */
+  background:none;
 }
-/* foto jadi latar, blur, fokus di TENGAH */
 body::before{
-  content:"";
-  position:fixed; inset:0; z-index:-1;
+  content:""; position:fixed; inset:0; z-index:-1;
   background-image:url("../../assets/bg-web.png");
-  background-size:cover;
-  background-position:center center; /* fokus tengah */
-  background-repeat:no-repeat;
-  filter: blur(14px) brightness(0.9);
-  transform: scale(1.04); /* hindari tepi blur terlihat */
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+  filter: blur(14px) brightness(0.9); transform: scale(1.04);
 }
-/* overlay gelap tipis agar teks kontras */
 body::after{
-  content:"";
-  position:fixed; inset:0; z-index:-1;
-  background: rgba(0,0,0,0.25);
+  content:""; position:fixed; inset:0; z-index:-1; background: rgba(0,0,0,0.25);
 }
 
 a{ color:inherit }
@@ -42,10 +34,7 @@ header{
   display:grid; place-items:center;
   padding:72px 16px 32px; text-align:center;
 }
-
-/* Matikan aura warna supaya benar-benar tanpa gradasi tambahan */
 .halo{ display:none }
-
 .hero{
   position:relative; z-index:1; max-width:920px; width:100%;
   background:linear-gradient(180deg, var(--card), #0b1022e6);
@@ -59,10 +48,7 @@ header{
   color:var(--muted); font-size:12px; letter-spacing:.3px;
 }
 h1{ font-size:clamp(28px,4vw,44px); margin:12px 0 8px; line-height:1.15 }
-.love{
-  background:linear-gradient(90deg,var(--brand),var(--accent));
-  -webkit-background-clip:text; color:transparent;
-}
+.love{ background:linear-gradient(90deg,var(--brand),var(--accent)); -webkit-background-clip:text; color:transparent; }
 .sub{ color:#dbeafe; font-weight:400; margin-top:6px; text-shadow:0 1px 2px #0008 }
 
 /* ===== Buttons / CTA ===== */
@@ -76,11 +62,9 @@ h1{ font-size:clamp(28px,4vw,44px); margin:12px 0 8px; line-height:1.15 }
 .btn.primary{ background:linear-gradient(90deg,var(--brand),var(--brand-2)); border:none }
 .btn[disabled]{ opacity:.6; pointer-events:none }
 
-/* ===== Stats ===== */
 .stats{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:18px }
 .chip{ background:#0b1220; border:1px solid #334155; padding:10px 12px; border-radius:10px; color:#cbd5e1; font-size:12px }
 
-/* ===== Sections / Cards ===== */
 .section{ max-width:1000px; margin:64px auto; padding:0 16px }
 .card{ background:var(--card); border:1px solid #334155; border-radius:20px; padding:24px; backdrop-filter: blur(6px) }
 h2{ font-size:clamp(22px,3vw,30px); margin:0 0 14px }
@@ -121,35 +105,110 @@ p{ color:#e2e8f0 }
   font-weight:700; color:#fff; font-size:14px; box-shadow:0 2px 10px rgba(96,165,250,.4);
 }
 
-/* ===== Abadikan Moment (Photo Booth) ===== */
-.uploader{ display:grid; gap:12px }
-@media(min-width:860px){ .uploader{ grid-template-columns:1fr 2fr } }
-.tool{ background:#0b1220; border:1px solid #334155; padding:12px; border-radius:12px }
-.tool label{ display:block; color:#cbd5e1; margin-bottom:8px }
-.tool-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px }
+/* ===== Photobooth (3-slot) ===== */
+.hidden{ display:none !important }
+.choices{ display:flex; gap:12px; flex-wrap:wrap; margin:16px 0 }
 
+.booth{
+  display:grid; gap:16px; grid-template-columns: 1.2fr 1fr;
+  background:var(--card); border:1px solid #334155; border-radius:18px; padding:16px;
+}
+@media (max-width:900px){ .booth{ grid-template-columns:1fr } }
+.booth-left{ display:grid; gap:12px; align-content:start }
+.booth-right{ display:grid; gap:10px; align-content:start }
+
+/* Kotak video: samakan ASPEK dengan jendela frame (≈640×467) */
+.video-box{ position:relative; border-radius:14px; overflow:hidden; border:1px solid #334155; background:#0b1220 }
+#cam{
+  width:100%;
+  aspect-ratio: 640 / 467;
+  object-fit: cover;
+  display:block;
+  background:#0b1220;
+  transition: transform 0.1s ease;
+}
+/* efek shake ringan */
+.cam-shake {
+  animation: camShake 0.25s linear 1;
+}
+@keyframes camShake {
+  0% { transform: translate(0,0) rotate(0deg); }
+  25% { transform: translate(-2px,2px) rotate(-0.5deg); }
+  50% { transform: translate(2px,-1px) rotate(0.5deg); }
+  75% { transform: translate(-1px,1px) rotate(-0.3deg); }
+  100% { transform: translate(0,0) rotate(0deg); }
+}
+
+/* overlay flash putih */
+#camera-flash {
+  position:absolute;
+  inset:0;
+  background:white;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s ease;
+  z-index:5;
+}
+.flash-active { opacity:0.9 !important; }
+
+/* booth control */
+.booth-ctrl{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+
+/* Thumbnails 3-slot */
+.thumbs{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px }
+.slot, .upslot{
+  width:100%; height:auto; aspect-ratio: 640 / 467;
+  border:1px dashed #334155; border-radius:12px; background:#0b1220; display:block;
+  transition: outline .2s ease;
+}
+.slot:hover{ outline:2px solid var(--brand-2); }
+.slot.selected{ outline:2px solid var(--brand-2) }
+
+/* Timer */
+.timer-row{ display:flex; gap:10px; align-items:center }
+#shotTimer{
+  appearance:none; padding:10px 14px; min-width:84px;
+  border-radius:14px; border:1px solid #2b3650;
+  background:#0b1220; color:#e5e7eb; font-weight:700;
+  box-shadow:0 2px 0 #0a0f1a inset, 0 0 0 1px #0a1020;
+}
+#shotTimer:focus{ outline:2px solid #1e293b }
+
+/* Hasil komposit */
+.result{ background:var(--card); border:1px solid #334155; border-radius:18px; padding:16px }
 .preview{
   position:relative; border:1px dashed #334155; border-radius:14px;
-  background:#0b1220; overflow:hidden; min-height:280px;
-  display:grid; place-items:center;
+  background:#0b1220; overflow:hidden; min-height:280px; display:grid; place-items:center;
 }
-.preview.empty::before{
-  content:"Upload foto atau mulai kamera dulu ya";
-  position:absolute; inset:0; display:grid; place-items:center; color:#94a3b8;
+#resultWrap .preview{ max-width:420px; margin:8px auto 0 }
+#resultWrap .preview canvas#frameCanvas{
+  width:100%; height:auto; display:block;
+  aspect-ratio: 723 / 2048;
+  border-radius:16px; border:1px solid #334155; background:#0b1220;
 }
-#cam{
-  display:none; width:min(100%,520px); height:auto; max-height:75vh;
-  object-fit:contain; background:#0b1220;
+
+/* ===== Dialog (konfirmasi) ===== */
+dialog{
+  background:#0b1220;
+  color:#e5e7eb;
+  border:1px solid #334155;
+  border-radius:14px;
+  padding:18px 16px;
+  box-shadow:0 22px 60px rgba(0,0,0,.45);
+  max-width:420px;
 }
-#frameCanvas{ display:block; width:100%; height:auto } /* tanpa aspect-ratio fix supaya mengikuti overlay */
+dialog::backdrop{
+  background:rgba(2,6,23,.58);
+  backdrop-filter: blur(4px) saturate(1.05);
+}
+dialog p{ margin:0 0 12px; color:#cbd5e1; }
+dialog form .btn{ min-width:92px }
 
 /* ===== Mobile tweaks ===== */
 @media (max-width:520px){
   .cta .btn{ width:100% }
-  .tool{ padding:10px }
   .badge{ font-size:11px }
-  .uploader{ grid-template-columns:1fr }
-  /* ringankan efek blur di HP */
+  .booth{ padding:12px }
   body::before{ filter: blur(10px) brightness(0.92) }
 }
 
@@ -157,120 +216,108 @@ p{ color:#e2e8f0 }
 footer{ padding:36px 16px 80px; text-align:center; color:var(--muted) }
 #confetti,#hearts{ position:fixed; inset:0; pointer-events:none }
 
-/* ===== Prefer reduced motion ===== */
-@media (prefers-reduced-motion:reduce){
-  .hero,.card{ backdrop-filter:none }
-  body::before{ filter: blur(6px) brightness(0.95) }
-}
-/* === Photobooth 4-up === */
-.hidden{ display:none !important; }
-
-.choices{
-  display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-bottom:10px;
+/* efek layar tidak blokir klik */
+#confetti,#hearts{
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
 }
 
-.booth{
-  display:grid; gap:14px;
-  grid-template-columns: 1fr 1fr;
-  margin-top: 12px;
+/* pastikan konten di atas kanvas */
+header, main, footer, .card, .section {
+  position: relative;
+  z-index: 1;
 }
-@media (max-width:900px){ .booth{ grid-template-columns: 1fr; } }
-
-.booth-left{ display:grid; gap:10px; align-content:start; }
-.booth-right{ display:grid; gap:10px; align-content:start; }
-
-#camVideo{
-  width:100%; aspect-ratio: 3/4; object-fit: cover;
-  border-radius:14px; border:1px solid #334155; background:#0b1220;
-}
-
-.thumbs{
-  display:grid; grid-template-columns: repeat(2, 1fr); gap:10px;
-}
-.thumb{
-  position:relative; aspect-ratio:3/4; border:1px dashed #334155; border-radius:12px;
-  background:#0b1220; overflow:hidden; display:grid; place-items:center; color:#94a3b8;
-  cursor:pointer;
-}
-.thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-.thumb.selected{ outline:2px solid var(--brand-2); }
-.thumb span{ font-weight:700; opacity:.6; }
-
-.booth-ctrl{ display:flex; gap:10px; flex-wrap:wrap; }
-
-.result canvas{
-  width:100%; height:auto; max-width:480px; display:block;
-  border-radius:16px; border:1px solid #334155; background:#0b1220; margin: 6px 0;
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* dialog (native) */
-dialog{
-  border:1px solid #334155; border-radius:14px; padding:16px; background:#0b1220; color:var(--text);
-}
-dialog form{ display:flex; gap:10px; justify-content:flex-end; margin-top:10px; }
-
-
-/* === Photobooth 4-up === */
-.hidden{ display:none !important; }
-
-.choices{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-bottom:10px; }
-
-.booth{
-  display:grid; gap:14px; grid-template-columns: 1fr 1fr; margin-top:12px;
-}
-@media (max-width:900px){ .booth{ grid-template-columns:1fr; } }
-
-.booth-left{ display:grid; gap:10px; align-content:start; }
-.booth-right{ display:grid; gap:10px; align-content:start; }
-
-#cam{
-  width:100%; aspect-ratio:3/4; object-fit:cover;
-  border-radius:14px; border:1px solid #334155; background:#0b1220; display:block;
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
 }
 
-.thumbs{ display:grid; grid-template-columns: repeat(2,1fr); gap:10px; }
-.slot,.upslot{
-  width:100%; height:auto; aspect-ratio:3/4;
-  background:#0b1220; border:1px dashed #334155; border-radius:12px;
+.modal.show {
+  opacity: 1;
+  visibility: visible;
 }
-.booth-ctrl{ display:flex; gap:10px; flex-wrap:wrap; }
 
-.preview{
-  position:relative; border:1px dashed #334155; border-radius:14px; background:#0b1220; overflow:hidden;
-  display:grid; place-items:center; min-height:280px;
+.btn {
+  padding: 10px 20px;
+  margin: 10px;
+  background-color: #60a5fa;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
-#frameCanvas{ display:block; width:100%; height:auto; }
 
-.btn.primary{ background:linear-gradient(90deg,var(--brand),var(--brand-2)); border:none; }
-.btn.primary:hover{ transform:translateY(-1px); }
-
-
-
-/* ==== Photobooth Result Sizing ==== */
-#resultWrap .preview{
-  max-width: 380px;          /* kecil & konsisten */
-  margin: 8px auto 0;
+.btn:hover {
+  background-color: #3b82f6;
 }
-#resultWrap .preview canvas{
+/* Timer Styles */
+.timer {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 100;
+  display: none;
+}
+/* Styling untuk Kenangan yang Sudah Lewat */
+#pastMemories {
+  padding: 2rem 0;
+}
+
+#pastMemories h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.memories-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.memory-item {
+  width: calc(50% - 1rem);
+  text-align: center;
+}
+
+.memory-item img {
   width: 100%;
   height: auto;
-  display: block;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-/* Batasi ukuran pratinjau hasil 4-frame */
-#frame .preview{ max-width: 360px; margin-inline: auto; }
-#frameCanvas{ display: block; width: 100%; height: auto; aspect-ratio: 1200 / 2133; }
 
-
-/* batasi preview hasil 4-up */
-.result canvas{ 
-  max-width: 360px;   /* atau 320px kalau mau lebih kecil */
-  width: 100%;
-  height: auto;
-  margin: 6px auto;
-  display: block;
-}
-/* Preview hasil 4-frame biar tidak kebesaran */
-#resultWrap .preview canvas#frameCanvas {
-  width: min(360px, 100%) !important;
-  height: auto !important;
+.memory-item p {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #4a4a4a;
 }
