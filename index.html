@@ -49,7 +49,7 @@
         <div>
           <h2>Surat Kecil Untukmu</h2>
           <p id="loveNote">Terima kasih sudah selalu sabar dan bikin aku merasa cukup.</p>
-          <p class="muted">Di bawah ada galeri berisi potongan cerita kita, tempat untuk abadikan momen baru, dan ucapan spesial. Semoga halaman ini terasa hangat seperti pelukan. 😊</p>
+          <p class="muted">Di bawah ada galeri cerita, tempat untuk abadikan momen baru, dan ucapan spesial. Semoga halaman ini hangat seperti pelukan. 😊</p>
         </div>
         <div>
           <h2>Detail Hari-H</h2>
@@ -71,70 +71,84 @@
     <section class="section" id="frame">
       <div class="card">
         <h2>Abadikan Momen Ini 📸</h2>
+
         <div id="choiceRow" class="choices" style="margin-top:10px">
           <button class="btn primary" id="btnCamFlow">Ambil Foto (Kamera)</button>
-          <button class="btn primary" id="btnUploadFlow">Upload 4 Foto</button>
+          <button class="btn primary" id="btnUploadFlow">Upload 3 Foto</button>
         </div>
 
+        <!-- FLOW KAMERA (3 slot) -->
         <div id="boothWrap" class="booth hidden" aria-hidden="true">
           <div class="booth-left">
-            <video id="cam" playsinline autoplay muted></video>
+            <div class="video-wrap">
+              <video id="cam" playsinline autoplay muted></video>
+              <div id="camTimer">00:00</div>
+            </div>
             <div class="booth-ctrl">
               <button class="btn primary" id="btnStartCam">Nyalakan Kamera</button>
-              <button class="btn" id="btnShot" disabled>Ambil Foto (slot aktif)</button>
-              <button class="btn" id="btnNext" disabled>Slot Berikutnya ➜</button>
-              <button class="btn" id="btnRetry" disabled>Retake Slot Aktif</button>
+              <button class="btn" id="btnFlip" disabled>Balik Kamera 🔄</button>
+              <button class="btn" id="btnAutoShot" disabled>Ambil 3 Foto ▶️</button>
               <button class="btn" id="btnReset" disabled>Reset</button>
               <button class="btn" id="btnConfirmCam" disabled>Lanjutkan</button>
             </div>
           </div>
           <div class="booth-right">
-            <div id="slotGrid" class="thumbs">
+            <div id="slotGrid" class="thumbs thumbs-3">
               <canvas class="slot" data-i="0" width="240" height="320"></canvas>
               <canvas class="slot" data-i="1" width="240" height="320"></canvas>
               <canvas class="slot" data-i="2" width="240" height="320"></canvas>
-              <canvas class="slot" data-i="3" width="240" height="320"></canvas>
             </div>
-            <p class="muted">Klik slot untuk memilih yang mau di-retake.</p>
+            <p class="muted">Klik foto hasil untuk retake (akan muncul konfirmasi).</p>
           </div>
         </div>
 
+        <!-- FLOW UPLOAD 3 -->
         <div id="uploadWrap" class="booth hidden" aria-hidden="true">
           <div class="booth-left">
-            <input type="file" id="files4" accept="image/*" multiple />
+            <input type="file" id="files3" accept="image/*" multiple />
             <div class="booth-ctrl">
               <button class="btn" id="btnClearUpload">Bersihkan Pilihan</button>
               <button class="btn" id="btnConfirmUpload" disabled>Lanjutkan</button>
             </div>
           </div>
           <div class="booth-right">
-            <div id="uploadGrid" class="thumbs">
+            <div id="uploadGrid" class="thumbs thumbs-3">
               <canvas class="upslot" data-i="0" width="240" height="320"></canvas>
               <canvas class="upslot" data-i="1" width="240" height="320"></canvas>
               <canvas class="upslot" data-i="2" width="240" height="320"></canvas>
-              <canvas class="upslot" data-i="3" width="240" height="320"></canvas>
             </div>
-            <p class="muted">Pilih tepat 4 foto. Klik salah satu slot untuk mengganti.</p>
+            <p class="muted">Pilih tepat 3 foto. Klik untuk mengganti.</p>
           </div>
         </div>
 
+        <!-- DIALOG KONFIRMASI GENERIK -->
         <dialog id="confirmDlg">
-          <p style="margin:0 0 12px">Sudah yakin dengan pilihan fotonya?</p>
-          <form method="dialog">
+          <p id="confirmMsg" style="margin:0 0 12px">Konfirmasi?</p>
+          <form method="dialog" class="confirm-actions">
             <button class="btn">Batal</button>
-            <button class="btn primary" value="ok">Ya, lanjut</button>
+            <button class="btn primary" value="ok">Ya</button>
           </form>
         </dialog>
 
+        <!-- DIALOG RETAKE -->
+        <dialog id="retakeDlg">
+          <p id="retakeMsg" style="margin:0 0 12px">Retake foto ini?</p>
+          <form method="dialog" class="confirm-actions">
+            <button class="btn">Batal</button>
+            <button class="btn primary" value="do">Retake</button>
+          </form>
+        </dialog>
+
+        <!-- HASIL AKHIR -->
         <div id="resultWrap" class="result hidden">
           <div class="preview" id="framePreview">
             <canvas id="frameCanvas" width="1200" height="2133"></canvas>
           </div>
           <div class="booth-ctrl">
-            <a class="btn primary" id="btnDownload" download="moment-4frame.png" href="#" style="opacity:.6;pointer-events:none">Download</a>
+            <a class="btn primary" id="btnDownload" download="moment-3frame.png" href="#" style="opacity:.6;pointer-events:none">Download</a>
             <button class="btn" id="btnBackChoose">Kembali ke Pilihan</button>
           </div>
-          <p class="muted">Template overlay: <code>assets/overlays/Template-Foto.png</code>.</p>
+          <p class="muted">Template overlay: <code>assets/overlays/Template-3up.png</code>.</p>
         </div>
       </div>
     </section>
@@ -154,14 +168,7 @@
   <dialog id="wishDlg" class="paper">
     <div class="paper-inner">
       <h3>Ucapan Untukmu ✨</h3>
-      <p id="wishText">
-        Selamat ulang tahun, sayang. Terima kasih sudah tumbuh dengan begitu indah.
-        Semoga tahun ini jadi halaman penuh keberanian, tawa lepas, dan langkah yang yakin.
-        Aku selalu mendukung mimpi-mimpimu; jangan ragu cerita kalau butuh sandaran.
-        Terus jadi versi terbaik dari dirimu—yang hangat, perhatian, dan tulus.
-        Kamu berharga, jauh lebih dari yang kadang kamu sadari.
-        Peluk dari jauh sampai bisa kupeluk beneran. 🎂💞
-      </p>
+      <p id="wishText"></p>
       <div class="paper-actions single">
         <button class="btn" id="btnCloseWish">Tutup</button>
       </div>
@@ -169,6 +176,7 @@
   </dialog>
 
   <audio id="bgm" preload="auto" loop src="assets/audio/penjaga-hati.mp3"></audio>
+  <audio id="shutterSound" preload="auto" src="assets/audio/shutter.mp3"></audio>
 
   <div id="gate" style="position:fixed;inset:0;background:#0b1022;display:none;align-items:center;justify-content:center;z-index:9999">
     <div class="card" style="max-width:420px;margin:16px;text-align:center">
