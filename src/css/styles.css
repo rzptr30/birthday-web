@@ -440,3 +440,169 @@ footer{text-align:center;padding:40px 16px;font-size:.8rem;color:#64748b}
 
 /* Hearts canvas positioning */
 #hearts{position:fixed;inset:0;pointer-events:none;z-index:-1}
+
+/* Popup kertas (Ucapan) */
+.paper{
+  padding:0;
+  border:none;
+  background:transparent;
+  width:100%;
+  max-width:580px;
+}
+.paper::backdrop{
+  background:rgba(0,0,15,.55);
+  backdrop-filter:blur(4px);
+}
+.paper-inner{
+  background:linear-gradient(180deg,#121a2cf0,#0b1220f0);
+  backdrop-filter:blur(6px);
+  color:#e2e8f0;
+  border-radius:24px;
+  padding:30px 30px 26px;
+  border:1px solid #334155;
+  box-shadow:0 26px 60px -14px rgba(0,0,0,.65);
+  font-size:15px;
+  line-height:1.6;
+  position:relative;
+}
+.paper-inner h3{
+  margin:0 0 16px;
+  font-size:21px;
+  font-weight:700;
+  background:linear-gradient(90deg,#f472b6 0%,#a78bfa 45%,#60a5fa 100%);
+  -webkit-background-clip:text;
+  color:transparent;
+  text-shadow:0 2px 10px rgba(96,165,250,.28);
+  letter-spacing:.5px;
+}
+.paper-inner p{
+  white-space:pre-line;
+  user-select:text;
+  -webkit-user-select:text;
+  margin:0 0 24px;
+  font-weight:400;
+  color:#e2e8f0;
+}
+.paper-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.paper-actions .btn{
+  background:#0e1624;
+  border:1px solid #334155;
+  color:#fff;
+  box-shadow:0 4px 14px -4px rgba(0,0,0,.55);
+}
+.paper-actions .btn.primary{
+  background:linear-gradient(90deg,#f472b6,#60a5fa);
+  border:none;
+  box-shadow:0 4px 18px -4px rgba(96,165,250,.55);
+}
+@media (max-width:600px){
+  .paper-inner{padding:26px 22px}
+  .paper-inner h3{font-size:19px}
+}
+
+:root{
+  --card:#0b1220cc;
+  --muted:#94a3b8;
+  --brand:#60a5fa;
+  --brand-2:#f472b6;
+}
+html,body{margin:0;padding:0;font-family:Poppins,sans-serif;background:#0b1022;color:#e2e8f0}
+header{position:relative;min-height:100dvh;display:grid;place-items:center;padding:72px 16px 32px;text-align:center;}
+.hero{position:relative;z-index:1;max-width:920px;width:100%;background:linear-gradient(180deg,var(--card),#0b1022e6);padding:36px 24px 54px;border-radius:40px;box-shadow:0 12px 40px -12px #00000080;}
+.badge{display:inline-block;padding:8px 18px;border:1px solid #334155;border-radius:999px;font-size:.85rem;color:#cbd5e1;background:#0b1220}
+.love{background:linear-gradient(90deg,#f472b6,#fcd34d);-webkit-background-clip:text;color:transparent;font-weight:700}
+.sub{max-width:760px;margin:12px auto 0;font-weight:300;line-height:1.55;color:#cbd5e1}
+
+.timers.split{display:grid;gap:32px;margin-top:26px}
+.timer-col{display:flex;flex-direction:column;align-items:center}
+.countdown{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.dd{min-width:74px;text-align:center;padding:10px 8px;border-radius:12px;background:#0b1220;border:1px solid #334155}
+.dd b{font-size:22px}
+.dd span{display:block;font-size:11px;color:var(--muted)}
+.title-col{font-weight:600;letter-spacing:.3px}
+@media(min-width:900px){.timers.split{grid-template-columns:1fr 1fr;align-items:start;justify-items:center}}
+
+.cta{display:flex;flex-wrap:wrap;gap:18px;margin-top:34px;justify-content:center}
+.btn{background:#0b1220;border:1px solid #334155;color:#e2e8f0;padding:12px 20px;border-radius:10px;font-weight:600;font-size:.9rem;cursor:pointer;transition:.25s}
+.btn.primary{background:linear-gradient(90deg,#f472b6,#60a5fa);color:#fff;border:none}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.section{max-width:1000px;margin:64px auto;padding:0 16px}
+.card{background:var(--card);border:1px solid #334155;border-radius:20px;padding:24px;backdrop-filter:blur(6px)}
+h2{font-size:clamp(22px,3vw,30px);margin:0 0 14px}
+p{color:#e2e8f0}
+.muted{color:var(--muted)}
+.grid{display:grid;gap:16px}
+@media(min-width:720px){.grid.cols-2{grid-template-columns:1fr 1fr}}
+footer{text-align:center;padding:40px 16px;font-size:.8rem;color:#64748b}
+
+/* Galeri caption */
+.gallery-stories{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:14px}
+.story{background:linear-gradient(180deg,#141a2b,#0b1022);border:1px solid #334155;border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.story img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;filter:saturate(1.05)}
+.story figcaption{padding:10px 12px 12px;font-size:.78rem;line-height:1.35;color:#cbd5e1;background:#0b1220;border-top:1px solid #334155;flex-grow:1}
+
+/* Photo booth ringkas */
+.thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:12px}
+.slot,.upslot{background:#0b1220;border:1px solid #334155;border-radius:12px}
+.booth-ctrl{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.hidden{display:none!important}
+.result .preview{max-width:480px;margin:auto}
+
+/* Hearts canvas */
+#hearts{position:fixed;inset:0;pointer-events:none;z-index:-1}
+
+/* Popup ucapan */
+.paper{padding:0;border:none;background:transparent;width:100%;max-width:580px}
+.paper::backdrop{background:rgba(0,0,15,.55);backdrop-filter:blur(4px)}
+.paper-inner{
+  background:linear-gradient(180deg,#121a2cf0,#0b1220f0);
+  backdrop-filter:blur(6px);
+  color:#e2e8f0;
+  border-radius:24px;
+  padding:30px 30px 26px;
+  border:1px solid #334155;
+  box-shadow:0 26px 60px -14px rgba(0,0,0,.65);
+  font-size:15px;
+  line-height:1.6;
+  position:relative;
+}
+.paper-inner h3{
+  margin:0 0 16px;
+  font-size:21px;
+  font-weight:700;
+  background:linear-gradient(90deg,#f472b6 0%,#a78bfa 45%,#60a5fa 100%);
+  -webkit-background-clip:text;
+  color:transparent;
+  text-shadow:0 2px 10px rgba(96,165,250,.28);
+  letter-spacing:.5px;
+}
+.paper-inner p{
+  white-space:pre-line;
+  user-select:text;
+  -webkit-user-select:text;
+  margin:0 0 28px;
+  font-weight:400;
+  color:#e2e8f0;
+}
+.paper-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.paper-actions.single{justify-content:center}
+.paper-actions .btn{
+  background:#0e1624;
+  border:1px solid #334155;
+  color:#fff;
+  box-shadow:0 4px 14px -4px rgba(0,0,0,.55);
+}
+
+@media (max-width:600px){
+  .paper-inner{padding:26px 22px}
+  .paper-inner h3{font-size:19px}
+}

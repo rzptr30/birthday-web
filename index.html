@@ -23,22 +23,22 @@
       <div class="timers split">
         <div class="timer-col">
           <p class="muted small title-col">Sudah hidup selama:</p>
-          <div class="countdown" id="lifeTimer" aria-label="Total waktu hidup (hari, jam, menit, detik)"></div>
+          <div class="countdown" id="lifeTimer"></div>
           <p class="muted small" style="margin-top:8px">atau</p>
-          <div class="countdown" id="ageYMD" aria-label="Usia dalam tahun, bulan, hari"></div>
+          <div class="countdown" id="ageYMD"></div>
         </div>
         <div class="timer-col">
           <p class="muted small title-col">Sejak kita resmi berpacaran:</p>
-          <div class="countdown" id="datingTimer" aria-label="Durasi hubungan (hari, jam, menit, detik)"></div>
+          <div class="countdown" id="datingTimer"></div>
           <p class="muted small title-col" style="margin-top:18px">Sejak pertama kali kita saling mengenal:</p>
-          <div class="countdown" id="metTimer" aria-label="Durasi sejak pertama kenal (hari, jam, menit, detik)"></div>
+          <div class="countdown" id="metTimer"></div>
         </div>
       </div>
 
       <div class="cta">
         <button class="btn primary" id="btnPlay">▶️ Putar Musik</button>
-        <button class="btn" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Lihat Kenangan 📷</button>
-        <button class="btn" id="btnBooth">Ke Photo Booth 📸</button>
+        <button class="btn primary" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Lihat Kenangan 📷</button>
+        <button class="btn primary" id="btnBooth">Ke Photo Booth 📸</button>
       </div>
     </div>
   </header>
@@ -49,7 +49,7 @@
         <div>
           <h2>Surat Kecil Untukmu</h2>
           <p id="loveNote">Terima kasih sudah selalu sabar dan bikin aku merasa cukup.</p>
-          <p class="muted">Di bawah ada galeri berisi potongan cerita kita, tempat untuk abadikan momen baru, dan surat kecil untuk masa depan. Semoga halaman ini terasa hangat seperti pelukan. 😊</p>
+          <p class="muted">Di bawah ada galeri berisi potongan cerita kita, tempat untuk abadikan momen baru, dan ucapan spesial. Semoga halaman ini terasa hangat seperti pelukan. 😊</p>
         </div>
         <div>
           <h2>Detail Hari-H</h2>
@@ -67,8 +67,6 @@
         <div class="gallery-stories" id="galStories"></div>
       </div>
     </section>
-
-    <!-- Section reasons telah dihapus -->
 
     <section class="section" id="frame">
       <div class="card">
@@ -130,28 +128,45 @@
 
         <div id="resultWrap" class="result hidden">
           <div class="preview" id="framePreview">
-            <canvas id="frameCanvas" width="1200" height="2133" aria-label="hasil 4-slot"></canvas>
+            <canvas id="frameCanvas" width="1200" height="2133"></canvas>
           </div>
           <div class="booth-ctrl">
             <a class="btn primary" id="btnDownload" download="moment-4frame.png" href="#" style="opacity:.6;pointer-events:none">Download</a>
             <button class="btn" id="btnBackChoose">Kembali ke Pilihan</button>
           </div>
-          <p class="muted">Template overlay: <code>assets/overlays/Template-Foto.png</code> (area jendela harus transparan).</p>
+          <p class="muted">Template overlay: <code>assets/overlays/Template-Foto.png</code>.</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="letter">
       <div class="card">
-        <h2>Surat untuk Masa Depan ✉️</h2>
-        <p>Aku pengin kita baca ini lagi suatu hari nanti.</p>
-        <div id="letterBody"></div>
-        <button class="btn" id="btnMore">Buka Paragraf Berikutnya ➜</button>
+        <h2>Selamat Ulang Tahun, Sayang💖</h2>
+        <p class="muted">Ada ucapan spesial yang bisa kamu buka. Kalau suka, kamu boleh simpan sendiri.</p>
+        <button class="btn primary" id="btnOpenWish">Buka Ucapan 🎁</button>
       </div>
     </section>
   </main>
 
   <footer>Dibuat dengan ❤️</footer>
+
+  <!-- Popup ucapan -->
+  <dialog id="wishDlg" class="paper">
+    <div class="paper-inner">
+      <h3>Ucapan Untukmu ✨</h3>
+      <p id="wishText">
+        Selamat ulang tahun, sayang. Terima kasih sudah tumbuh dengan begitu indah.
+        Semoga tahun ini jadi halaman penuh keberanian, tawa lepas, dan langkah yang yakin.
+        Aku selalu mendukung mimpi-mimpimu; jangan ragu cerita kalau butuh sandaran.
+        Terus jadi versi terbaik dari dirimu—yang hangat, perhatian, dan tulus.
+        Kamu berharga, jauh lebih dari yang kadang kamu sadari.
+        Peluk dari jauh sampai bisa kupeluk beneran. 🎂💞
+      </p>
+      <div class="paper-actions single">
+        <button class="btn" id="btnCloseWish">Tutup</button>
+      </div>
+    </div>
+  </dialog>
 
   <audio id="bgm" preload="auto" loop src="assets/audio/penjaga-hati.mp3"></audio>
 
