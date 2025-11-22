@@ -5,17 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Happy Birthday, Adellia!🫶🏻🎂✨</title>
   <meta name="description" content="Situs mini untuk merayakan ulang tahun kamu. Dibuat penuh cinta 💖" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-  <!-- CSS eksternal -->
   <link rel="stylesheet" href="src/css/styles.css">
 </head>
 <body>
-  <!-- efek -->
-  <canvas id="confetti"></canvas>
+  <!-- Hapus canvas konfeti; hanya hearts untuk petals -->
   <canvas id="hearts"></canvas>
 
   <header>
@@ -25,24 +21,25 @@
       <h1>Happy Birthday, <span class="love" id="name">Sayang</span>! 💖</h1>
       <p class="sub">Terima kasih sudah hadir dan mewarnai hariku. Ini hadiah kecil: satu halaman yang hanya untuk kamu. ✨</p>
 
-      <!-- TIMER HIDUP -->
-      <p class="muted small" style="margin-top:10px">Sudah hidup selama:</p>
-      <div class="countdown" id="lifeTimer" aria-label="Total waktu hidup (hari, jam, menit, detik)"></div>
-      <p class="muted small" id="ageBreakdown" style="margin-top:6px">—</p>
-
-      <!-- TIMER SEJAK JADIAN -->
-      <p class="muted small" style="margin-top:12px">Sudah jadian selama:</p>
-      <div class="countdown" id="datingTimer" aria-label="Durasi hubungan (hari, jam, menit, detik)"></div>
+      <div class="timers split">
+        <div class="timer-col">
+          <p class="muted small title-col">Sudah hidup selama:</p>
+          <div class="countdown" id="lifeTimer" aria-label="Total waktu hidup (hari, jam, menit, detik)"></div>
+          <p class="muted small" style="margin-top:8px">atau</p>
+          <div class="countdown" id="ageYMD" aria-label="Usia dalam tahun, bulan, hari"></div>
+        </div>
+        <div class="timer-col">
+          <p class="muted small title-col">Sejak kita resmi berpacaran:</p>
+          <div class="countdown" id="datingTimer" aria-label="Durasi hubungan (hari, jam, menit, detik)"></div>
+          <p class="muted small title-col" style="margin-top:18px">Sejak pertama kali kita saling mengenal:</p>
+          <div class="countdown" id="metTimer" aria-label="Durasi sejak pertama kenal (hari, jam, menit, detik)"></div>
+        </div>
+      </div>
 
       <div class="cta">
         <button class="btn primary" id="btnPlay">▶️ Putar Musik</button>
         <button class="btn" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Lihat Kenangan 📷</button>
-        <button class="btn" id="btnConfetti">Semprot Konfeti 🎊</button>
-      </div>
-
-      <div class="stats">
-        <div class="chip">❤️ <span id="daysTogether">0</span> hari sejak kenal</div>
-        <div class="chip">💍 <span id="daysDating">0</span> hari sejak jadian</div>
+        <button class="btn" id="btnBooth">Ke Photo Booth 📸</button>
       </div>
     </div>
   </header>
@@ -79,18 +76,15 @@
       </div>
     </section>
 
-    <!-- ====== Abadikan Momen (4-up, overlay) ====== -->
     <section class="section" id="frame">
       <div class="card">
         <h2>Abadikan Momen Ini 📸</h2>
 
-        <!-- PILIHAN AWAL -->
         <div id="choiceRow" class="choices" style="margin-top:10px">
           <button class="btn primary" id="btnCamFlow">Ambil Foto (Kamera)</button>
           <button class="btn primary" id="btnUploadFlow">Upload 4 Foto</button>
         </div>
 
-        <!-- FLOW KAMERA -->
         <div id="boothWrap" class="booth hidden" aria-hidden="true">
           <div class="booth-left">
             <video id="cam" playsinline autoplay muted></video>
@@ -114,7 +108,6 @@
           </div>
         </div>
 
-        <!-- FLOW UPLOAD 4 -->
         <div id="uploadWrap" class="booth hidden" aria-hidden="true">
           <div class="booth-left">
             <input type="file" id="files4" accept="image/*" multiple />
@@ -134,7 +127,6 @@
           </div>
         </div>
 
-        <!-- DIALOG KONFIRMASI -->
         <dialog id="confirmDlg">
           <p style="margin:0 0 12px">Sudah yakin dengan pilihan fotonya?</p>
           <form method="dialog">
@@ -143,7 +135,6 @@
           </form>
         </dialog>
 
-        <!-- HASIL AKHIR -->
         <div id="resultWrap" class="result hidden">
           <div class="preview" id="framePreview">
             <canvas id="frameCanvas" width="1200" height="2133" aria-label="hasil 4-slot"></canvas>
@@ -157,7 +148,6 @@
       </div>
     </section>
 
-    <!-- ====== SURAT (dikembalikan) ====== -->
     <section class="section" id="letter">
       <div class="card">
         <h2>Surat untuk Masa Depan ✉️</h2>
@@ -168,12 +158,10 @@
     </section>
   </main>
 
-  <footer> Dibuat dengan ❤️ </footer>
+  <footer>Dibuat dengan ❤️</footer>
 
-  <!-- audio -->
   <audio id="bgm" preload="auto" loop src="assets/audio/penjaga-hati.mp3"></audio>
 
-  <!-- Gate tunggal: tanggal spesial -->
   <div id="gate" style="position:fixed;inset:0;background:#0b1022;display:none;align-items:center;justify-content:center;z-index:9999">
     <div class="card" style="max-width:420px;margin:16px;text-align:center">
       <h2>Hi, ini khusus buat kamu 💞</h2>
@@ -186,7 +174,6 @@
     </div>
   </div>
 
-  <!-- JS eksternal -->
   <script defer src="src/js/main.js"></script>
 </body>
 </html>

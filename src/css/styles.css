@@ -321,3 +321,32 @@ header, main, footer, .card, .section {
   font-size: 1rem;
   color: #4a4a4a;
 }
+
+.timers.split{
+  display:grid;
+  gap:32px;
+  margin-top:18px;
+}
+.timer-col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.timer-col .countdown{
+  margin-top:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.title-col{
+  text-align:center;
+  font-weight:600;
+  letter-spacing:.3px;
+}
+@media (min-width:900px){
+  .timers.split{
+    grid-template-columns:1fr 1fr;
+    align-items:start;
+    justify-items:center;
+  }
+  .timer-col{ align-items:center; }
+}
