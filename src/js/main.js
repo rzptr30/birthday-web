@@ -15,10 +15,7 @@ const CONFIG = {
     "Mari terus jaga satu sama lain, tumbuh bareng, dan ketawa untuk hal-hal receh setiap hari."
   ],
   bgmStartSeconds: 60,
-
-  // Overlay 4-up
   overlaySrc: "assets/overlays/Template-Foto.png",
-  // [x%, y%, w%, h%] relatif ke overlay
   frameRects: [
     [ 6,  7.8, 88, 16.5],
     [ 6, 31.5, 88, 16.5],
@@ -65,8 +62,7 @@ function showToast(msg){ ensureToast(); toastMsg.textContent = msg||toastMsg.tex
 function hideToast(){ if(!toast) return; toast.style.opacity='0'; toast.style.pointerEvents='none'; }
 
 // ===== INIT HEADER =====
-const nameEl = $("#name"), dateLbl = $("#dateLbl"), dateText = $("#dateText");
-const daysTogether = $("#daysTogether"), daysDating = $("#daysDating"), loveNote = $("#loveNote");
+const nameEl = $("#name"), dateLbl = $("#dateLbl"), dateText = $("#dateText"), loveNote = $("#loveNote");
 if (nameEl) {
   nameEl.textContent = CONFIG.herName; loveNote.textContent = CONFIG.loveNote;
 
@@ -74,76 +70,76 @@ if (nameEl) {
   const firstMet    = new Date(CONFIG.firstMet);
   const datingStart = new Date(CONFIG.datingStart);
 
-  // Tanggal ulang tahun tahun ini (31 Desember)
-  const currentYear = new Date().getFullYear();
-  const birthdayThisYear = new Date(currentYear, 11, 31, 0, 0, 0);
-  const targetLabel = birthdayThisYear.toLocaleDateString('id-ID',
+  const thisYear = new Date().getFullYear();
+  const birthdayThisYear = new Date(thisYear, 11, 31, 0, 0, 0);
+  const label = birthdayThisYear.toLocaleDateString('id-ID',
     {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
-  dateLbl.textContent  = targetLabel;
-  dateText.textContent = targetLabel;
+  dateLbl.textContent  = label;
+  dateText.textContent = label;
+  $("#age").textContent = thisYear - birthDate.getFullYear();
 
-  $("#age").textContent = currentYear - birthDate.getFullYear();
+  const lifeTimer  = $("#lifeTimer");
+  const ageYMD     = $("#ageYMD");
+  const datingTimer= $("#datingTimer");
+  const metTimer   = $("#metTimer");
 
-  const nowMs = Date.now();
-  daysTogether.textContent = Math.max(0, Math.floor((nowMs - firstMet.getTime())/86400000));
-  daysDating.textContent   = Math.max(0, Math.floor((nowMs - datingStart.getTime())/86400000));
-
-  // Elemen timer baru
-  const lifeTimer    = $("#lifeTimer");
-  const ageBreakdown = $("#ageBreakdown");
-  const datingTimer  = $("#datingTimer");
-
-  // Hitung selisih kalender (tahun, bulan, hari)
   function diffYMD(from,to){
     let years = to.getFullYear() - from.getFullYear();
     let months = to.getMonth() - from.getMonth();
     let days = to.getDate() - from.getDate();
     if (days < 0) {
       const prevMonth = new Date(to.getFullYear(), to.getMonth(), 0);
-      days += prevMonth.getDate();
-      months--;
+      days += prevMonth.getDate(); months--;
     }
-    if (months < 0) {
-      months += 12;
-      years--;
-    }
-    return {years, months, days};
+    if (months < 0) { months += 12; years--; }
+    return {years,months,days};
   }
 
-  function renderLifeTimers(){
+  function renderTimers(){
     const now = new Date();
 
-    // Total hidup
-    const lifeMs = now.getTime() - birthDate.getTime();
-    const d = Math.floor(lifeMs/86400000);
-    const h = Math.floor((lifeMs%86400000)/3600000);
-    const m = Math.floor((lifeMs%3600000)/60000);
-    const s = Math.floor((lifeMs%60000)/1000);
+    const lifeMs = now - birthDate;
+    const lifeDays = Math.floor(lifeMs/86400000);
+    const lifeHours = Math.floor((lifeMs%86400000)/3600000);
+    const lifeMinutes = Math.floor((lifeMs%3600000)/60000);
+    const lifeSeconds = Math.floor((lifeMs%60000)/1000);
     lifeTimer.innerHTML =
-     `<div class="dd"><b>${pad(d)}</b><span>Hari</span></div>
-      <div class="dd"><b>${pad(h)}</b><span>Jam</span></div>
-      <div class="dd"><b>${pad(m)}</b><span>Menit</span></div>
-      <div class="dd"><b>${pad(s)}</b><span>Detik</span></div>`;
+     `<div class="dd"><b>${pad(lifeDays)}</b><span>Hari</span></div>
+      <div class="dd"><b>${pad(lifeHours)}</b><span>Jam</span></div>
+      <div class="dd"><b>${pad(lifeMinutes)}</b><span>Menit</span></div>
+      <div class="dd"><b>${pad(lifeSeconds)}</b><span>Detik</span></div>`;
 
-    // Breakdown umur Y/M/D
     const {years,months,days} = diffYMD(birthDate, now);
-    ageBreakdown.textContent = `Detail usia: ${years} tahun, ${months} bulan, ${days} hari`;
+    ageYMD.innerHTML =
+     `<div class="dd"><b>${pad(years)}</b><span>Tahun</span></div>
+      <div class="dd"><b>${pad(months)}</b><span>Bulan</span></div>
+      <div class="dd"><b>${pad(days)}</b><span>Hari</span></div>`;
 
-    // Lama jadian
-    const datingMs = now.getTime() - datingStart.getTime();
-    const dd = Math.floor(datingMs/86400000);
-    const dh = Math.floor((datingMs%86400000)/3600000);
-    const dm = Math.floor((datingMs%3600000)/60000);
-    const ds = Math.floor((datingMs%60000)/1000);
+    const datingMs = now - datingStart;
+    const dtDays = Math.floor(datingMs/86400000);
+    const dtHours = Math.floor((datingMs%86400000)/3600000);
+    const dtMinutes = Math.floor((datingMs%3600000)/60000);
+    const dtSeconds = Math.floor((datingMs%60000)/1000);
     datingTimer.innerHTML =
-     `<div class="dd"><b>${pad(dd)}</b><span>Hari</span></div>
-      <div class="dd"><b>${pad(dh)}</b><span>Jam</span></div>
-      <div class="dd"><b>${pad(dm)}</b><span>Menit</span></div>
-      <div class="dd"><b>${pad(ds)}</b><span>Detik</span></div>`;
+     `<div class="dd"><b>${pad(dtDays)}</b><span>Hari</span></div>
+      <div class="dd"><b>${pad(dtHours)}</b><span>Jam</span></div>
+      <div class="dd"><b>${pad(dtMinutes)}</b><span>Menit</span></div>
+      <div class="dd"><b>${pad(dtSeconds)}</b><span>Detik</span></div>`;
+
+    const metMs = now - firstMet;
+    const mtDays = Math.floor(metMs/86400000);
+    const mtHours = Math.floor((metMs%86400000)/3600000);
+    const mtMinutes = Math.floor((metMs%3600000)/60000);
+    const mtSeconds = Math.floor((metMs%60000)/1000);
+    metTimer.innerHTML =
+     `<div class="dd"><b>${pad(mtDays)}</b><span>Hari</span></div>
+      <div class="dd"><b>${pad(mtHours)}</b><span>Jam</span></div>
+      <div class="dd"><b>${pad(mtMinutes)}</b><span>Menit</span></div>
+      <div class="dd"><b>${pad(mtSeconds)}</b><span>Detik</span></div>`;
   }
 
-  renderLifeTimers();
-  setInterval(renderLifeTimers, 1000);
+  renderTimers();
+  setInterval(renderTimers, 1000);
 }
 
 // ===== GALLERY =====
@@ -161,7 +157,11 @@ const reasons = [
   "Matamu kalau lagi cerita","Tekadmu ngejar mimpi","Gaya fotomu yang gemes","Kamu jadi rumah buatku"
 ];
 const reasonsList = $("#reasonsList");
-if (reasonsList) reasons.forEach((t,i)=>{ const d=el('div',{className:'reason'}); d.innerHTML=`<div class="num">${i+1}</div><div class="txt">${t}</div>`; reasonsList.appendChild(d); });
+if (reasonsList) reasons.forEach((t,i)=>{
+  const d=el('div',{className:'reason'});
+  d.innerHTML=`<div class="num">${i+1}</div><div class="txt">${t}</div>`;
+  reasonsList.appendChild(d);
+});
 
 // ===== MUSIC =====
 const audio = $("#bgm"), btnPlay = $("#btnPlay");
@@ -179,48 +179,23 @@ if (btnPlay && audio) {
   });
 }
 
-// ===== Konfeti ringan =====
-const cv = document.getElementById('confetti'), cx = cv.getContext('2d');
-const hv = document.getElementById('hearts'),   hx = hv.getContext('2d');
+// Shortcut ke Photo Booth
+document.getElementById('btnBooth')?.addEventListener('click', () => {
+  document.getElementById('frame')?.scrollIntoView({behavior:'smooth'});
+});
+
+// ===== PETALS / HEARTS =====
+const hv = document.getElementById('hearts');
+const hx = hv.getContext('2d');
 const DPR = Math.min(window.devicePixelRatio || 1, 1.25);
-function resize(){
+function resizeHearts(){
   const w = innerWidth, h = innerHeight;
-  cv.width = Math.floor(w * DPR); cv.height = Math.floor(h * DPR);
   hv.width = Math.floor(w * DPR); hv.height = Math.floor(h * DPR);
-  cv.style.width = w+'px'; cv.style.height = h+'px';
   hv.style.width = w+'px'; hv.style.height = h+'px';
-  cx.setTransform(DPR,0,0,DPR,0,0);
   hx.setTransform(DPR,0,0,DPR,0,0);
 }
-addEventListener('resize', resize); resize();
+addEventListener('resize', resizeHearts); resizeHearts();
 
-let dots = [];
-let rafId = null, running = false;
-function spawn(n=160){
-  const W = cv.width/DPR, H = cv.height/DPR;
-  for (let i=0;i<n;i++){
-    dots.push({x:Math.random()*W,y:-10,r:2.5+Math.random()*2.5,vY:1.8+Math.random()*2.2,vX:(Math.random()-.5)*1.2,a:1});
-  }
-  startLoop();
-}
-function loop(){
-  const W=cv.width/DPR,H=cv.height/DPR;
-  cx.clearRect(0,0,W,H);
-  for(const d of dots){
-    d.y+=d.vY; d.x+=d.vX; d.a-=.006; if(d.a<0)d.a=0;
-    cx.globalAlpha=d.a;
-    cx.fillStyle=['#f472b6','#60a5fa','#fcd34d','#a78bfa'][(Math.random()*4)|0];
-    cx.beginPath(); cx.arc(d.x,d.y,d.r,0,Math.PI*2); cx.fill();
-  }
-  dots=dots.filter(d=>d.a>0 && d.y<H+10);
-  if(dots.length===0){ stopLoop(); return; }
-  rafId=requestAnimationFrame(loop);
-}
-function startLoop(){ if(running) return; running=true; rafId=requestAnimationFrame(loop); }
-function stopLoop(){ running=false; if(rafId) cancelAnimationFrame(rafId); rafId=null; cx.clearRect(0,0,cv.width/DPR,cv.height/DPR); }
-document.getElementById('btnConfetti')?.addEventListener('click', () => spawn(200));
-
-// ===== PETALS (untuk tombol surat) =====
 let petals=[], petalsId=null;
 function drawPetal(x,y,s,rot){
   hx.save(); hx.translate(x,y); hx.rotate(rot); hx.scale(s/20,s/20);
@@ -245,35 +220,32 @@ function petalsLoop(){
   else { cancelAnimationFrame(petalsId); petalsId=null; }
 }
 
-// ===== Surat bertahap (guarded) =====
+// ===== Surat bertahap =====
 const letterBody = $("#letterBody"), btnMore = $("#btnMore");
 if (letterBody && btnMore) {
   CONFIG.letters.forEach((t,i)=>{ const p=el('p',{className:'frag'}); p.textContent=t; if(i>0)p.style.display='none'; letterBody.appendChild(p); });
   btnMore.addEventListener('click',()=>{
     const frags=[...document.querySelectorAll('#letterBody .frag')];
     const hidden=frags.find(x=>x.style.display==='none');
-    if(hidden){ hidden.style.display='block'; spawn(80); }
+    if(hidden){ hidden.style.display='block'; petalsRain(); }
     else { btnMore.textContent='Sudah terbaca semua ❤️'; btnMore.disabled=true; petalsRain(); }
   });
 }
 
-// ========== PHOTO BOOTH – v2 ==========
+// ========== PHOTO BOOTH ==========
 const OVERLAY_SRC = CONFIG.overlaySrc;
 const FRAME_PCTS  = CONFIG.frameRects;
 
-// Elemen global hasil
 const frameCanvas = document.getElementById('frameCanvas');
 const fctx        = frameCanvas.getContext('2d');
 const resultWrap  = document.getElementById('resultWrap');
 const btnDownload = document.getElementById('btnDownload');
 const btnBackChoose = document.getElementById('btnBackChoose');
 
-// Pilihan sumber
 const choiceRow   = document.getElementById('choiceRow');
 const btnCamFlow  = document.getElementById('btnCamFlow');
 const btnUploadFlow = document.getElementById('btnUploadFlow');
 
-// Flow kamera
 const boothWrap   = document.getElementById('boothWrap');
 const cam         = document.getElementById('cam');
 const btnStartCam = document.getElementById('btnStartCam');
@@ -285,7 +257,6 @@ const btnConfirmCam = document.getElementById('btnConfirmCam');
 const slotGrid    = document.getElementById('slotGrid');
 const slotCanvases = slotGrid ? Array.from(slotGrid.querySelectorAll('canvas.slot')) : [];
 
-// Flow upload
 const uploadWrap  = document.getElementById('uploadWrap');
 const files4      = document.getElementById('files4');
 const btnClearUpload = document.getElementById('btnClearUpload');
@@ -293,16 +264,14 @@ const btnConfirmUpload = document.getElementById('btnConfirmUpload');
 const uploadGrid  = document.getElementById('uploadGrid');
 const upCanvases  = uploadGrid ? Array.from(uploadGrid.querySelectorAll('canvas.upslot')) : [];
 
-// Dialog
+// FIX: single declaration of confirmDlg (hapus deklarasi duplikat)
 const confirmDlg  = document.getElementById('confirmDlg');
 
-// State
 let overlayImg = null, overlayReady = false;
 let images = [null,null,null,null];
 let activeIndex = 0;
 let stream = null;
 
-// Helpers UI
 function show(el){ el?.classList.remove('hidden'); el?.setAttribute('aria-hidden','false'); }
 function hide(el){ el?.classList.add('hidden'); el?.setAttribute('aria-hidden','true'); }
 function enable(...els){ els.forEach(e=>e && (e.disabled=false)); }
@@ -350,7 +319,6 @@ function ensureOverlay(){
   };
   overlayImg.src = OVERLAY_SRC;
 }
-
 function rectPx([x,y,w,h]){
   const cw = frameCanvas.width, ch = frameCanvas.height;
   return [
@@ -369,7 +337,7 @@ function toChoice(){
   btnDownload.style.opacity='.6'; btnDownload.style.pointerEvents='none'; btnDownload.removeAttribute('href');
 }
 
-// ==== Kamera ====
+// Kamera
 async function startCam(){
   try{
     stopCam();
@@ -379,8 +347,8 @@ async function startCam(){
     cam.srcObject = stream;
     enable(btnShot,btnNext,btnRetry,btnReset);
     markActive(activeIndex);
-  }catch(e){
-    showToast('Tidak bisa membuka kamera. Pastikan izin & situs HTTPS (GitHub Pages).');
+  }catch{
+    showToast('Tidak bisa membuka kamera. Pastikan izin & HTTPS.');
   }
 }
 function stopCam(){ if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } cam.srcObject=null; }
@@ -389,7 +357,6 @@ slotGrid?.addEventListener('click',e=>{
   const c = e.target.closest('canvas.slot'); if(!c) return;
   activeIndex = Number(c.dataset.i)||0; markActive(activeIndex);
 });
-
 btnStartCam?.addEventListener('click', startCam);
 
 btnShot?.addEventListener('click', ()=>{
@@ -410,17 +377,13 @@ btnShot?.addEventListener('click', ()=>{
   };
   im.src = url;
 });
-
-btnNext?.addEventListener('click', ()=>{
-  activeIndex = (activeIndex+1) % 4; markActive(activeIndex);
-});
+btnNext?.addEventListener('click', ()=>{ activeIndex = (activeIndex+1) % 4; markActive(activeIndex); });
 btnRetry?.addEventListener('click', ()=>{ markActive(activeIndex); });
 btnReset?.addEventListener('click', ()=>{
-  images=[null,null,null,null]; activeIndex=0; resetPreviews(); markActive(activeIndex);
-  disable(btnConfirmCam);
+  images=[null,null,null,null]; activeIndex=0; resetPreviews(); markActive(activeIndex); disable(btnConfirmCam);
 });
 
-// ==== Upload 4 ====
+// Upload
 files4?.addEventListener('change', ()=>{
   const files = Array.from(files4.files||[]);
   if (files.length !== 4){ showToast('Pilih tepat 4 foto ya.'); return; }
@@ -449,12 +412,11 @@ uploadGrid?.addEventListener('click', e=>{
   };
   pick.click();
 });
-
 btnClearUpload?.addEventListener('click', ()=>{
   images=[null,null,null,null]; resetPreviews(); disable(btnConfirmUpload);
 });
 
-// ==== Pilih alur ====
+// Pilih alur
 btnCamFlow?.addEventListener('click', ()=>{
   ensureOverlay(); resetPreviews();
   hide(choiceRow); hide(uploadWrap); hide(resultWrap); show(boothWrap);
@@ -466,7 +428,7 @@ btnUploadFlow?.addEventListener('click', ()=>{
   stopCam();
 });
 
-// ==== Konfirmasi & Komposisi ====
+// Konfirmasi & Komposisi
 function confirmProceed(){
   if (!images.every(Boolean)){ showToast('Lengkapi 4 fotonya dulu ya.'); return Promise.resolve(false); }
   if (typeof confirmDlg?.showModal === 'function'){
@@ -477,57 +439,52 @@ function confirmProceed(){
   }
   return Promise.resolve(confirm('Sudah yakin dengan fotonya?'));
 }
-
 function composeStrip(){
-  if (!overlayReady){ showToast('Template belum siap dimuat. Coba lagi sebentar.'); return; }
+  if (!overlayImg){ showToast('Template belum siap.'); return; }
   fctx.clearRect(0,0,frameCanvas.width,frameCanvas.height);
-  FRAME_PCTS.forEach((prc,i)=>{
+  CONFIG.frameRects.forEach((prc,i)=>{
     const [x,y,w,h] = rectPx(prc);
     const img = images[i]; if(!img) return;
     const iw = img.naturalWidth, ih = img.naturalHeight;
     const s  = Math.max(w/iw, h/ih);
-    const dw = iw*s, dh = ih*s;
+    const dw = iw*s, dh=ih*s;
     const dx = x + (w - dw)/2, dy = y + (h - dh)/2;
     fctx.drawImage(img, dx,dy,dw,dh);
   });
-  fctx.drawImage(overlayImg, 0,0, frameCanvas.width, frameCanvas.height);
+  fctx.drawImage(overlayImg,0,0,frameCanvas.width,frameCanvas.height);
   hide(boothWrap); hide(uploadWrap); show(resultWrap);
   btnDownload.href = frameCanvas.toDataURL('image/png');
   btnDownload.style.opacity='1'; btnDownload.style.pointerEvents='auto';
   stopCam();
 }
-
 btnConfirmCam?.addEventListener('click', async ()=>{ if(await confirmProceed()) composeStrip(); });
 btnConfirmUpload?.addEventListener('click', async ()=>{ if(await confirmProceed()) composeStrip(); });
 btnBackChoose?.addEventListener('click', toChoice);
 
-// ===== SELF TESTS =====
-(function selfTests(){
-  const tests=[ ()=>!!document.getElementById('frameCanvas'), ()=>document.getElementById('hearts').width>=0 ];
-  const results=tests.map(fn=>{try{return !!fn()}catch{return false}});
-  console.log('%c[BirthdayWeb] Self-tests:','color:#60a5fa',results);
+// Self test
+(function(){
+  const ok = !!document.getElementById('frameCanvas');
+  console.log('[BirthdayWeb] init ok:', ok);
 })();
 
-// ====== GATE (Tanggal Spesial) ======
-const GKEY = 'bd-gate-ok-v4';
-const PASS = '290824'; // ddmmyy
+// Gate
+const GKEY='bd-gate-ok-v4';
+const PASS='290824';
 function showGate(){
   $('#gate').style.display='flex';
-  stopLoop(); cv.style.display='none'; hv.style.display='none';
 }
 function hideGate(){
   $('#gate').style.display='none';
-  cv.style.display=''; hv.style.display='';
 }
 function normalize(inp){
-  const d = (inp||'').replace(/\D/g,'');
-  if (d.length === 8) return d.slice(0,2)+d.slice(2,4)+d.slice(6,8); // ddmmyyyy -> ddmmyy
+  const d=(inp||'').replace(/\D/g,'');
+  if(d.length===8) return d.slice(0,2)+d.slice(2,4)+d.slice(6,8);
   return d;
 }
-if (localStorage.getItem(GKEY) !== 'yes') showGate();
+if(localStorage.getItem(GKEY)!=='yes') showGate();
 function tryEnter(){
-  const v = normalize($('#gateInput').value);
-  if (v === PASS){ localStorage.setItem(GKEY,'yes'); hideGate(); }
+  const v=normalize($('#gateInput').value);
+  if(v===PASS){ localStorage.setItem(GKEY,'yes'); hideGate(); }
   else showToast('Masih salah, coba lagi ya 😛');
 }
 $('#gateBtn').addEventListener('click', tryEnter);
