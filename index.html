@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="src/css/styles.css">
 </head>
 <body>
-  <!-- Hapus canvas konfeti; hanya hearts untuk petals -->
   <canvas id="hearts"></canvas>
 
   <header>
@@ -49,8 +48,8 @@
       <div class="card grid cols-2">
         <div>
           <h2>Surat Kecil Untukmu</h2>
-          <p id="loveNote">Hari ini spesial, sama seperti dirimu. Semoga semua doa terbaik mengiringi langkahmu. Aku bangga sama kamu—terus bersinar, ya! 🌟</p>
-          <p class="muted">Scroll terus ya—ada galeri, alasan kenapa kamu spesial, Abadikan Momen, dan surat kecil untuk masa depan kita. 😊</p>
+          <p id="loveNote">Terima kasih sudah selalu sabar dan bikin aku merasa cukup.</p>
+          <p class="muted">Di bawah ada galeri berisi potongan cerita kita, tempat untuk abadikan momen baru, dan surat kecil untuk masa depan. Semoga halaman ini terasa hangat seperti pelukan. 😊</p>
         </div>
         <div>
           <h2>Detail Hari-H</h2>
@@ -64,22 +63,16 @@
     <section class="section" id="gallery">
       <div class="card">
         <h2>Galeri Kenangan</h2>
-        <p>Pilih 6–12 foto favorit kalian. Taruh di folder <code>assets/gallery</code>.</p>
-        <div class="gallery" id="gal"></div>
+        <p>Setiap foto punya cerita kecil di bawahnya. Taruh gambar di <code>assets/gallery</code>.</p>
+        <div class="gallery-stories" id="galStories"></div>
       </div>
     </section>
 
-    <section class="section" id="reasons">
-      <div class="card">
-        <h2>10 Hal yang Aku Suka dari Kamu 💗</h2>
-        <div class="reasons" id="reasonsList"></div>
-      </div>
-    </section>
+    <!-- Section reasons telah dihapus -->
 
     <section class="section" id="frame">
       <div class="card">
         <h2>Abadikan Momen Ini 📸</h2>
-
         <div id="choiceRow" class="choices" style="margin-top:10px">
           <button class="btn primary" id="btnCamFlow">Ambil Foto (Kamera)</button>
           <button class="btn primary" id="btnUploadFlow">Upload 4 Foto</button>

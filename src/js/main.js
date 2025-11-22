@@ -4,9 +4,15 @@ const CONFIG = {
   birthday: "2004-12-31T00:00:00+07:00",
   firstMet: "2024-03-12T00:00:00+07:00",
   datingStart: "2024-08-29T00:00:00+07:00",
-  gallery: [
-    "assets/gallery/1.jpg","assets/gallery/2.jpg","assets/gallery/3.jpg",
-    "assets/gallery/4.jpg","assets/gallery/5.jpg","assets/gallery/6.jpg"
+  galleryInfo: [
+    { src:"assets/gallery/1.jpg", caption:"Saat pertama kali kita duduk bareng dan semuanya terasa natural." },
+    { src:"assets/gallery/2.jpg", caption:"Foto candid yang bikin aku sadar kamu selalu diam-diam mendukung." },
+    { src:"assets/gallery/3.jpg", caption:"Momen ketawa berlebihan karena hal receh—ingat ini?" },
+    { src:"assets/gallery/4.jpg", caption:"Sore itu langit jadi latar cerita kita." },
+    { src:"assets/gallery/5.jpg", caption:"Hari jajan favorit, sederhana tapi hangat sekali." },
+    { src:"assets/gallery/6.jpg", caption:"Selfie buru-buru sebelum pulang—mataku masih berbinar karena kamu." },
+    { src:"assets/gallery/7.jpg", caption:"Malam panjang ngobrol mimpi; dunia mengecil jadi kita." },
+    { src:"assets/gallery/8.jpg", caption:"Foto yang kusimpan kalau kangen—senyummu kompas pulangku." }
   ],
   loveNote: "Terima kasih sudah selalu sabar dan bikin aku merasa cukup.",
   letters: [
@@ -142,26 +148,19 @@ if (nameEl) {
   setInterval(renderTimers, 1000);
 }
 
-// ===== GALLERY =====
-const gal = $("#gal");
-if (gal) CONFIG.gallery.forEach(src=>{
-  const f = el('figure'); const img = el('img',{src,alt:'kenangan'});
-  img.loading = 'lazy'; img.decoding = 'async';
-  f.appendChild(img); gal.appendChild(f);
-});
-
-// ===== REASONS =====
-const reasons = [
-  "Senyummu bikin hari aku adem","Cara kamu dengerin aku","Humor receh kita nyambung",
-  "Perhatian kecil yang ga pernah lupa","Semangat belajarmu","Sabar + pengertian",
-  "Matamu kalau lagi cerita","Tekadmu ngejar mimpi","Gaya fotomu yang gemes","Kamu jadi rumah buatku"
-];
-const reasonsList = $("#reasonsList");
-if (reasonsList) reasons.forEach((t,i)=>{
-  const d=el('div',{className:'reason'});
-  d.innerHTML=`<div class="num">${i+1}</div><div class="txt">${t}</div>`;
-  reasonsList.appendChild(d);
-});
+// ===== GALERI CERITA =====
+const galStories = $("#galStories");
+if (galStories) {
+  CONFIG.galleryInfo.slice(0,8).forEach(item=>{
+    const fig = el('figure',{className:'story'});
+    const img = el('img',{src:item.src,alt:'kenangan'});
+    img.loading='lazy'; img.decoding='async';
+    const cap = el('figcaption');
+    cap.textContent = item.caption;
+    fig.appendChild(img); fig.appendChild(cap);
+    galStories.appendChild(fig);
+  });
+}
 
 // ===== MUSIC =====
 const audio = $("#bgm"), btnPlay = $("#btnPlay");
@@ -225,8 +224,7 @@ const letterBody = $("#letterBody"), btnMore = $("#btnMore");
 if (letterBody && btnMore) {
   CONFIG.letters.forEach((t,i)=>{ const p=el('p',{className:'frag'}); p.textContent=t; if(i>0)p.style.display='none'; letterBody.appendChild(p); });
   btnMore.addEventListener('click',()=>{
-    const frags=[...document.querySelectorAll('#letterBody .frag')];
-    const hidden=frags.find(x=>x.style.display==='none');
+    const hidden=[...document.querySelectorAll('#letterBody .frag')].find(x=>x.style.display==='none');
     if(hidden){ hidden.style.display='block'; petalsRain(); }
     else { btnMore.textContent='Sudah terbaca semua ❤️'; btnMore.disabled=true; petalsRain(); }
   });
@@ -264,7 +262,6 @@ const btnConfirmUpload = document.getElementById('btnConfirmUpload');
 const uploadGrid  = document.getElementById('uploadGrid');
 const upCanvases  = uploadGrid ? Array.from(uploadGrid.querySelectorAll('canvas.upslot')) : [];
 
-// FIX: single declaration of confirmDlg (hapus deklarasi duplikat)
 const confirmDlg  = document.getElementById('confirmDlg');
 
 let overlayImg = null, overlayReady = false;
@@ -337,7 +334,6 @@ function toChoice(){
   btnDownload.style.opacity='.6'; btnDownload.style.pointerEvents='none'; btnDownload.removeAttribute('href');
 }
 
-// Kamera
 async function startCam(){
   try{
     stopCam();
@@ -383,7 +379,6 @@ btnReset?.addEventListener('click', ()=>{
   images=[null,null,null,null]; activeIndex=0; resetPreviews(); markActive(activeIndex); disable(btnConfirmCam);
 });
 
-// Upload
 files4?.addEventListener('change', ()=>{
   const files = Array.from(files4.files||[]);
   if (files.length !== 4){ showToast('Pilih tepat 4 foto ya.'); return; }
@@ -412,11 +407,11 @@ uploadGrid?.addEventListener('click', e=>{
   };
   pick.click();
 });
+
 btnClearUpload?.addEventListener('click', ()=>{
   images=[null,null,null,null]; resetPreviews(); disable(btnConfirmUpload);
 });
 
-// Pilih alur
 btnCamFlow?.addEventListener('click', ()=>{
   ensureOverlay(); resetPreviews();
   hide(choiceRow); hide(uploadWrap); hide(resultWrap); show(boothWrap);
@@ -428,7 +423,6 @@ btnUploadFlow?.addEventListener('click', ()=>{
   stopCam();
 });
 
-// Konfirmasi & Komposisi
 function confirmProceed(){
   if (!images.every(Boolean)){ showToast('Lengkapi 4 fotonya dulu ya.'); return Promise.resolve(false); }
   if (typeof confirmDlg?.showModal === 'function'){
@@ -461,7 +455,6 @@ btnConfirmCam?.addEventListener('click', async ()=>{ if(await confirmProceed()) 
 btnConfirmUpload?.addEventListener('click', async ()=>{ if(await confirmProceed()) composeStrip(); });
 btnBackChoose?.addEventListener('click', toChoice);
 
-// Self test
 (function(){
   const ok = !!document.getElementById('frameCanvas');
   console.log('[BirthdayWeb] init ok:', ok);
@@ -470,12 +463,8 @@ btnBackChoose?.addEventListener('click', toChoice);
 // Gate
 const GKEY='bd-gate-ok-v4';
 const PASS='290824';
-function showGate(){
-  $('#gate').style.display='flex';
-}
-function hideGate(){
-  $('#gate').style.display='none';
-}
+function showGate(){ $('#gate').style.display='flex'; }
+function hideGate(){ $('#gate').style.display='none'; }
 function normalize(inp){
   const d=(inp||'').replace(/\D/g,'');
   if(d.length===8) return d.slice(0,2)+d.slice(2,4)+d.slice(6,8);
