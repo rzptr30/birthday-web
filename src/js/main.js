@@ -27,9 +27,6 @@ const CONFIG = {
   ]
 };
 
-// Hitung mundur ke event ulang tahun berikutnya (opsional khusus UI lama)
-const COUNTDOWN_TARGET = "2025-12-31T00:00:00+07:00";
-
 // ===== UTIL =====
 const pad = n => String(n).padStart(2,'0');
 const $   = q => document.querySelector(q);
@@ -73,54 +70,80 @@ const daysTogether = $("#daysTogether"), daysDating = $("#daysDating"), loveNote
 if (nameEl) {
   nameEl.textContent = CONFIG.herName; loveNote.textContent = CONFIG.loveNote;
 
-  const birthDate  = new Date(CONFIG.birthday);
-  const targetDate = new Date(COUNTDOWN_TARGET);
+  const birthDate   = new Date(CONFIG.birthday);
+  const firstMet    = new Date(CONFIG.firstMet);
+  const datingStart = new Date(CONFIG.datingStart);
 
-  const targetLabel = targetDate.toLocaleDateString('id-ID',
+  // Tanggal ulang tahun tahun ini (31 Desember)
+  const currentYear = new Date().getFullYear();
+  const birthdayThisYear = new Date(currentYear, 11, 31, 0, 0, 0);
+  const targetLabel = birthdayThisYear.toLocaleDateString('id-ID',
     {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
   dateLbl.textContent  = targetLabel;
   dateText.textContent = targetLabel;
 
-  $("#age").textContent = new Date().getFullYear() - birthDate.getFullYear();
+  $("#age").textContent = currentYear - birthDate.getFullYear();
 
-  const fm = new Date(CONFIG.firstMet), ds = new Date(CONFIG.datingStart), nowMs = Date.now();
-  daysTogether.textContent = Math.max(0, Math.floor((nowMs - fm.getTime())/86400000));
-  daysDating.textContent   = Math.max(0, Math.floor((nowMs - ds.getTime())/86400000));
+  const nowMs = Date.now();
+  daysTogether.textContent = Math.max(0, Math.floor((nowMs - firstMet.getTime())/86400000));
+  daysDating.textContent   = Math.max(0, Math.floor((nowMs - datingStart.getTime())/86400000));
 
-  // TIMER UMUR LIVE (tambahan)
-  const lifeTimerEl = $("#lifeTimer");
-  function formatLife(ms){
-    let s = Math.floor(ms/1000);
-    const sec = s % 60; s = (s-sec)/60;
-    const min = s % 60; s = (s-min)/60;
-    const hour = s % 24; s = (s-hour)/24;
-    const days = s;
-    const years = Math.floor(days/365);
-    const months = Math.floor((days % 365)/30);
-    const d = (days % 365) % 30;
-    return `Umur berjalan: ${years}th, ${months}bln, ${d}hr, ${hour}j ${min}m ${sec}d`;
+  // Elemen timer baru
+  const lifeTimer    = $("#lifeTimer");
+  const ageBreakdown = $("#ageBreakdown");
+  const datingTimer  = $("#datingTimer");
+
+  // Hitung selisih kalender (tahun, bulan, hari)
+  function diffYMD(from,to){
+    let years = to.getFullYear() - from.getFullYear();
+    let months = to.getMonth() - from.getMonth();
+    let days = to.getDate() - from.getDate();
+    if (days < 0) {
+      const prevMonth = new Date(to.getFullYear(), to.getMonth(), 0);
+      days += prevMonth.getDate();
+      months--;
+    }
+    if (months < 0) {
+      months += 12;
+      years--;
+    }
+    return {years, months, days};
   }
-  function startLifeTimer(){
-    if (!lifeTimerEl) return;
-    function tick(){ lifeTimerEl.textContent = formatLife(Date.now() - birthDate.getTime()); requestAnimationFrame(tick); }
-    tick();
-  }
-  startLifeTimer();
 
-  const countdown = $("#countdown");
-  function renderCountdown(){
-    const t = targetDate.getTime() - Date.now();
-    const d = Math.max(0, Math.floor(t/86400000));
-    const h = Math.max(0, Math.floor((t%86400000)/3600000));
-    const m = Math.max(0, Math.floor((t%3600000)/60000));
-    const s = Math.max(0, Math.floor((t%60000)/1000));
-    countdown.innerHTML =
+  function renderLifeTimers(){
+    const now = new Date();
+
+    // Total hidup
+    const lifeMs = now.getTime() - birthDate.getTime();
+    const d = Math.floor(lifeMs/86400000);
+    const h = Math.floor((lifeMs%86400000)/3600000);
+    const m = Math.floor((lifeMs%3600000)/60000);
+    const s = Math.floor((lifeMs%60000)/1000);
+    lifeTimer.innerHTML =
      `<div class="dd"><b>${pad(d)}</b><span>Hari</span></div>
       <div class="dd"><b>${pad(h)}</b><span>Jam</span></div>
       <div class="dd"><b>${pad(m)}</b><span>Menit</span></div>
       <div class="dd"><b>${pad(s)}</b><span>Detik</span></div>`;
+
+    // Breakdown umur Y/M/D
+    const {years,months,days} = diffYMD(birthDate, now);
+    ageBreakdown.textContent = `Detail usia: ${years} tahun, ${months} bulan, ${days} hari`;
+
+    // Lama jadian
+    const datingMs = now.getTime() - datingStart.getTime();
+    const dd = Math.floor(datingMs/86400000);
+    const dh = Math.floor((datingMs%86400000)/3600000);
+    const dm = Math.floor((datingMs%3600000)/60000);
+    const ds = Math.floor((datingMs%60000)/1000);
+    datingTimer.innerHTML =
+     `<div class="dd"><b>${pad(dd)}</b><span>Hari</span></div>
+      <div class="dd"><b>${pad(dh)}</b><span>Jam</span></div>
+      <div class="dd"><b>${pad(dm)}</b><span>Menit</span></div>
+      <div class="dd"><b>${pad(ds)}</b><span>Detik</span></div>`;
   }
-  renderCountdown(); setInterval(renderCountdown, 1000);
+
+  renderLifeTimers();
+  setInterval(renderLifeTimers, 1000);
 }
 
 // ===== GALLERY =====
@@ -159,10 +182,6 @@ if (btnPlay && audio) {
 // ===== Konfeti ringan =====
 const cv = document.getElementById('confetti'), cx = cv.getContext('2d');
 const hv = document.getElementById('hearts'),   hx = hv.getContext('2d');
-// Pastikan canvas tidak memblok interaksi (tambahan)
-if (cv) cv.style.pointerEvents = 'none';
-if (hv) hv.style.pointerEvents = 'none';
-
 const DPR = Math.min(window.devicePixelRatio || 1, 1.25);
 function resize(){
   const w = innerWidth, h = innerHeight;
@@ -238,7 +257,7 @@ if (letterBody && btnMore) {
   });
 }
 
-// ========== PHOTO BOOTH – v2 (match HTML: btnCamFlow/btnUploadFlow/boothWrap/uploadWrap) ==========
+// ========== PHOTO BOOTH – v2 ==========
 const OVERLAY_SRC = CONFIG.overlaySrc;
 const FRAME_PCTS  = CONFIG.frameRects;
 
@@ -279,7 +298,7 @@ const confirmDlg  = document.getElementById('confirmDlg');
 
 // State
 let overlayImg = null, overlayReady = false;
-let images = [null,null,null,null];     // HTMLImageElement per slot
+let images = [null,null,null,null];
 let activeIndex = 0;
 let stream = null;
 
@@ -308,7 +327,6 @@ function markActive(idx){
   const s = slotCanvases[idx];
   if (s) s.style.outline='2px solid #60a5fa';
 }
-function nextEmptyIndex(){ return images.findIndex(x=>!x); }
 
 function coverDrawTo(canvas, img){
   const ctx = canvas.getContext('2d');
@@ -327,7 +345,6 @@ function ensureOverlay(){
   overlayImg = new Image();
   overlayImg.onload = ()=>{
     overlayReady = true;
-    // Samakan ukuran kanvas hasil dengan overlay
     frameCanvas.width  = overlayImg.naturalWidth;
     frameCanvas.height = overlayImg.naturalHeight;
   };
@@ -340,6 +357,7 @@ function rectPx([x,y,w,h]){
     Math.round(x * cw / 100),
     Math.round(y * ch / 100),
     Math.round(w * cw / 100),
+    Math.round(h * ch / 100),
   ];
 }
 
@@ -348,7 +366,6 @@ function toChoice(){
   stopCam(); images = [null,null,null,null]; activeIndex=0;
   resetPreviews();
   disable(btnShot,btnNext,btnRetry,btnReset,btnConfirmCam,btnConfirmUpload);
-  // matikan download
   btnDownload.style.opacity='.6'; btnDownload.style.pointerEvents='none'; btnDownload.removeAttribute('href');
 }
 
@@ -377,10 +394,8 @@ btnStartCam?.addEventListener('click', startCam);
 
 btnShot?.addEventListener('click', ()=>{
   if(!stream || !cam.videoWidth) return;
-  // tangkap frame ~3:4
   const off = document.createElement('canvas'); off.width=720; off.height=960;
   const ox = off.getContext('2d');
-  // cover fit dari video ke 3:4
   const iw=cam.videoWidth, ih=cam.videoHeight;
   const s=Math.max(off.width/iw, off.height/ih);
   const dw=iw*s, dh=ih*s, dx=(off.width-dw)/2, dy=(off.height-dh)/2;
@@ -399,10 +414,7 @@ btnShot?.addEventListener('click', ()=>{
 btnNext?.addEventListener('click', ()=>{
   activeIndex = (activeIndex+1) % 4; markActive(activeIndex);
 });
-btnRetry?.addEventListener('click', ()=>{
-  // cukup ambil ulang; placeholder tidak perlu direset
-  markActive(activeIndex);
-});
+btnRetry?.addEventListener('click', ()=>{ markActive(activeIndex); });
 btnReset?.addEventListener('click', ()=>{
   images=[null,null,null,null]; activeIndex=0; resetPreviews(); markActive(activeIndex);
   disable(btnConfirmCam);
@@ -468,11 +480,9 @@ function confirmProceed(){
 
 function composeStrip(){
   if (!overlayReady){ showToast('Template belum siap dimuat. Coba lagi sebentar.'); return; }
-  // gambar foto
   fctx.clearRect(0,0,frameCanvas.width,frameCanvas.height);
   FRAME_PCTS.forEach((prc,i)=>{
     const [x,y,w,h] = rectPx(prc);
-    // cover-fit ke rect
     const img = images[i]; if(!img) return;
     const iw = img.naturalWidth, ih = img.naturalHeight;
     const s  = Math.max(w/iw, h/ih);
@@ -480,10 +490,7 @@ function composeStrip(){
     const dx = x + (w - dw)/2, dy = y + (h - dh)/2;
     fctx.drawImage(img, dx,dy,dw,dh);
   });
-  // overlay di atasnya
   fctx.drawImage(overlayImg, 0,0, frameCanvas.width, frameCanvas.height);
-
-  // tampilkan hasil
   hide(boothWrap); hide(uploadWrap); show(resultWrap);
   btnDownload.href = frameCanvas.toDataURL('image/png');
   btnDownload.style.opacity='1'; btnDownload.style.pointerEvents='auto';
@@ -503,7 +510,7 @@ btnBackChoose?.addEventListener('click', toChoice);
 
 // ====== GATE (Tanggal Spesial) ======
 const GKEY = 'bd-gate-ok-v4';
-const PASS = '290824';          // ddmmyy
+const PASS = '290824'; // ddmmyy
 function showGate(){
   $('#gate').style.display='flex';
   stopLoop(); cv.style.display='none'; hv.style.display='none';
@@ -525,17 +532,3 @@ function tryEnter(){
 }
 $('#gateBtn').addEventListener('click', tryEnter);
 $('#gateInput').addEventListener('keydown', e=>{ if(e.key==='Enter') tryEnter(); });
-
-/* ===== SHORTCUT TOMBOL (tambahan) ===== */
-// Tombol "Kenangan Kita" (id sudah ditambahkan di index.html, onclick lama tetap ada)
-document.getElementById('btnMemories')?.addEventListener('click', ()=>{
-  document.getElementById('gallery')?.scrollIntoView({behavior:'smooth'});
-});
-// Tombol "Mulai Foto Booth" -> scroll + buka flow kamera otomatis
-document.getElementById('btnGotoBooth')?.addEventListener('click', ()=>{
-  document.getElementById('frame')?.scrollIntoView({behavior:'smooth'});
-  setTimeout(()=>{
-    document.getElementById('btnCamFlow')?.click();
-    setTimeout(()=>document.getElementById('btnStartCam')?.click(), 400);
-  }, 300);
-});

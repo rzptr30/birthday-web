@@ -12,12 +12,6 @@
 
   <!-- CSS eksternal -->
   <link rel="stylesheet" href="src/css/styles.css">
-
-  <!-- Tambahan kecil agar canvas tidak menghalangi klik, dan gaya timer -->
-  <style>
-    #confetti, #hearts { pointer-events: none; }
-    #lifeTimer { font-size:.9rem; margin-top:8px; color:#cbd5e1; font-family:monospace; }
-  </style>
 </head>
 <body>
   <!-- efek -->
@@ -31,16 +25,18 @@
       <h1>Happy Birthday, <span class="love" id="name">Sayang</span>! 💖</h1>
       <p class="sub">Terima kasih sudah hadir dan mewarnai hariku. Ini hadiah kecil: satu halaman yang hanya untuk kamu. ✨</p>
 
-      <!-- TIMER UMUR LIVE (tambahan) -->
-      <div id="lifeTimer" aria-label="Timer hidup"></div>
+      <!-- TIMER HIDUP -->
+      <p class="muted small" style="margin-top:10px">Sudah hidup selama:</p>
+      <div class="countdown" id="lifeTimer" aria-label="Total waktu hidup (hari, jam, menit, detik)"></div>
+      <p class="muted small" id="ageBreakdown" style="margin-top:6px">—</p>
 
-      <div class="countdown" id="countdown" aria-label="Hitung mundur ke hari H"></div>
+      <!-- TIMER SEJAK JADIAN -->
+      <p class="muted small" style="margin-top:12px">Sudah jadian selama:</p>
+      <div class="countdown" id="datingTimer" aria-label="Durasi hubungan (hari, jam, menit, detik)"></div>
 
       <div class="cta">
         <button class="btn primary" id="btnPlay">▶️ Putar Musik</button>
-        <button class="btn" id="btnMemories" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Lihat Kenangan 📷</button>
-        <!-- Tombol shortcut ke photobooth (tambahan) -->
-        <button class="btn" id="btnGotoBooth">Mulai Foto Booth 📸</button>
+        <button class="btn" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Lihat Kenangan 📷</button>
         <button class="btn" id="btnConfetti">Semprot Konfeti 🎊</button>
       </div>
 
