@@ -681,3 +681,82 @@ dialog::backdrop{
 .slot.captured:hover, .upslot:hover{
   outline:2px solid #60a5fa;
 }
+
+/* Tambahan / penyesuaian untuk countdown & mirror */
+.video-wrap{
+  position:relative;
+  width:100%;
+  max-width:420px;
+  aspect-ratio:3/4;
+  background:#0b1220;
+  border:1px solid #334155;
+  border-radius:18px;
+  overflow:hidden;
+}
+.video-wrap video{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .3s;
+}
+.video-wrap.mirrored video{
+  transform:scaleX(-1);
+}
+#countOverlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:clamp(48px,10vw,110px);
+  font-weight:700;
+  color:#fff;
+  text-shadow:0 4px 16px rgba(0,0,0,.6);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s;
+  background:radial-gradient(circle at center,rgba(0,0,0,.35),rgba(0,0,0,.55));
+}
+.flash-effect{animation:flash .25s ease;}
+@keyframes flash{
+  0%{filter:brightness(1)}
+  40%{filter:brightness(1.8)}
+  100%{filter:brightness(1)}
+}
+.shake-effect{animation:shake .25s ease;}
+@keyframes shake{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(3px,0)}
+  40%{transform:translate(-3px,0)}
+  60%{transform:translate(2px,0)}
+  80%{transform:translate(-2px,0)}
+}
+.thumbs-3{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+.slot,.upslot{cursor:pointer;transition:.25s}
+.slot.captured:hover,.upslot:hover{outline:2px solid #60a5fa}
+
+/* Dialog */
+dialog{
+  border:none;
+  border-radius:18px;
+  background:#101827;
+  color:#e2e8f0;
+  padding:24px 22px 20px;
+  width:min(92vw,420px);
+  box-shadow:0 30px 60px -12px rgba(0,0,0,.7);
+}
+dialog::backdrop{
+  background:rgba(0,0,20,.55);
+  backdrop-filter:blur(4px);
+}
+.confirm-actions{
+  display:flex;
+  gap:12px;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  margin-top:4px;
+}
+/* (Bagian lain stylesheet kamu tetap seperti sebelumnya) */

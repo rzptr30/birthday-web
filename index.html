@@ -77,16 +77,22 @@
           <button class="btn primary" id="btnUploadFlow">Upload 3 Foto</button>
         </div>
 
-        <!-- FLOW KAMERA (3 slot) -->
+        <!-- FLOW KAMERA -->
         <div id="boothWrap" class="booth hidden" aria-hidden="true">
           <div class="booth-left">
-            <div class="video-wrap">
+            <div class="video-wrap" id="videoWrap">
               <video id="cam" playsinline autoplay muted></video>
-              <div id="camTimer">00:00</div>
+              <div id="countOverlay"></div>
             </div>
             <div class="booth-ctrl">
               <button class="btn primary" id="btnStartCam">Nyalakan Kamera</button>
+              <select class="btn" id="captureDelay" disabled>
+                <option value="3">Timer 3s</option>
+                <option value="5">Timer 5s</option>
+                <option value="10">Timer 10s</option>
+              </select>
               <button class="btn" id="btnFlip" disabled>Balik Kamera 🔄</button>
+              <button class="btn" id="btnMirror" disabled>Mirror ↔️</button>
               <button class="btn" id="btnAutoShot" disabled>Ambil 3 Foto ▶️</button>
               <button class="btn" id="btnReset" disabled>Reset</button>
               <button class="btn" id="btnConfirmCam" disabled>Lanjutkan</button>
@@ -98,11 +104,11 @@
               <canvas class="slot" data-i="1" width="240" height="320"></canvas>
               <canvas class="slot" data-i="2" width="240" height="320"></canvas>
             </div>
-            <p class="muted">Klik foto hasil untuk retake (akan muncul konfirmasi).</p>
+            <p class="muted">Klik foto hasil untuk retake (akan muncul konfirmasi & countdown).</p>
           </div>
         </div>
 
-        <!-- FLOW UPLOAD 3 -->
+        <!-- FLOW UPLOAD -->
         <div id="uploadWrap" class="booth hidden" aria-hidden="true">
           <div class="booth-left">
             <input type="file" id="files3" accept="image/*" multiple />
@@ -121,7 +127,7 @@
           </div>
         </div>
 
-        <!-- DIALOG KONFIRMASI GENERIK -->
+        <!-- DIALOG KONFIRMASI -->
         <dialog id="confirmDlg">
           <p id="confirmMsg" style="margin:0 0 12px">Konfirmasi?</p>
           <form method="dialog" class="confirm-actions">
@@ -139,7 +145,7 @@
           </form>
         </dialog>
 
-        <!-- HASIL AKHIR -->
+        <!-- HASIL -->
         <div id="resultWrap" class="result hidden">
           <div class="preview" id="framePreview">
             <canvas id="frameCanvas" width="1200" height="2133"></canvas>
@@ -148,7 +154,7 @@
             <a class="btn primary" id="btnDownload" download="moment-3frame.png" href="#" style="opacity:.6;pointer-events:none">Download</a>
             <button class="btn" id="btnBackChoose">Kembali ke Pilihan</button>
           </div>
-          <p class="muted">Template overlay: <code>assets/overlays/Template-3up.png</code>.</p>
+          <p class="muted">Template overlay: <code>assets/overlays/Template-Foto.png</code>.</p>
         </div>
       </div>
     </section>

@@ -1,4 +1,4 @@
-// ===== CONFIG (overlaySrc kembali ke Template-Foto.png) =====
+// ===== CONFIG =====
 const CONFIG = {
   herName: "Adellia",
   birthday: "2004-12-31T00:00:00+07:00",
@@ -21,59 +21,61 @@ Kamu berharga, jauh lebih dari yang kadang kamu sadari.
 Peluk dari jauh sampai bisa kupeluk beneran. 🎂💞`,
   bgmStartSeconds: 60,
   overlaySrc: "assets/overlays/Template-Foto.png",
+  // Tiga panel vertikal (sesuaikan jika perlu)
   frameRects: [
     [ 6,  6.5, 88, 24 ],
     [ 6, 37.5, 88, 24 ],
     [ 6, 68.5, 88, 24 ]
-  ]
+  ],
+  autoIntervalMs: 700 // jeda antar foto otomatis
 };
 
 // ===== UTIL =====
 const pad = n => String(n).padStart(2,'0');
 const $   = q => document.querySelector(q);
 const el  = (tag,attrs={}) => { const x=document.createElement(tag); Object.assign(x,attrs); return x; };
-function showToast(msg){ ensureToast(); toastMsg.textContent = msg; toast.style.opacity='1'; toast.style.pointerEvents='auto'; }
-function hideToast(){ if(!toast) return; toast.style.opacity='0'; toast.style.pointerEvents='none'; }
 
+// ===== Toast =====
 let toast, toastMsg, toastClose;
 function ensureToast(){
   if (toast) return;
-  toast = el('div'); toast.id='toast';
+  toast = el('div');
   Object.assign(toast.style,{
-    position:'fixed', inset:'0', display:'grid', placeItems:'center',
-    background:'rgba(0,0,0,.4)', backdropFilter:'blur(3px)',
-    opacity:'0', pointerEvents:'none', transition:'opacity .2s', zIndex:'99999'
+    position:'fixed',inset:'0',display:'grid',placeItems:'center',
+    background:'rgba(0,0,0,.45)',backdropFilter:'blur(3px)',
+    opacity:'0',pointerEvents:'none',transition:'opacity .2s',zIndex:'99999'
   });
-  const box = el('div');
+  const box=el('div');
   Object.assign(box.style,{
-    width:'min(92vw,380px)', background:'#151a2b', border:'1px solid #334155',
-    borderRadius:'18px', boxShadow:'0 20px 50px -12px rgba(0,0,0,.6)',
-    padding:'18px', color:'#e2e8f0', fontSize:'14px'
+    width:'min(92vw,380px)',background:'#151a2b',border:'1px solid #334155',
+    borderRadius:'18px',padding:'18px',boxShadow:'0 20px 50px -12px rgba(0,0,0,.6)',color:'#e2e8f0'
   });
-  toastMsg = el('div',{textContent:'Info'});
-  toastClose = el('button',{textContent:'Tutup'});
+  toastMsg=el('div',{textContent:'Info'});
+  toastClose=el('button',{textContent:'Tutup',type:'button'});
   Object.assign(toastClose.style,{
-    marginTop:'12px', background:'#334155', color:'#e2e8f0', border:'none',
-    padding:'8px 14px', borderRadius:'10px', cursor:'pointer', fontWeight:'600'
+    marginTop:'12px',background:'#334155',color:'#e2e8f0',border:'none',padding:'8px 14px',
+    borderRadius:'10px',cursor:'pointer',fontWeight:'600'
   });
-  toastClose.onclick = hideToast;
+  toastClose.onclick=hideToast;
   box.appendChild(toastMsg); box.appendChild(toastClose);
   toast.appendChild(box); document.body.appendChild(toast);
 }
+function showToast(msg){ ensureToast(); toastMsg.textContent=msg; toast.style.opacity='1'; toast.style.pointerEvents='auto'; }
+function hideToast(){ if(!toast) return; toast.style.opacity='0'; toast.style.pointerEvents='none'; }
 
-// ===== HEADER + TIMERS =====
-const nameEl = $("#name"), dateLbl = $("#dateLbl"), dateText = $("#dateText"), loveNote = $("#loveNote");
-if (nameEl){
-  nameEl.textContent = CONFIG.herName;
-  loveNote.textContent = CONFIG.loveNote;
-  const birthDate = new Date(CONFIG.birthday);
-  const firstMet = new Date(CONFIG.firstMet);
-  const datingStart = new Date(CONFIG.datingStart);
-  const thisYear = new Date().getFullYear();
-  const birthdayThisYear = new Date(thisYear,11,31,0,0,0);
-  const label = birthdayThisYear.toLocaleDateString('id-ID',{weekday:'long', day:'2-digit', month:'long', year:'numeric'});
-  dateLbl.textContent = label; dateText.textContent = label;
-  $("#age").textContent = thisYear - birthDate.getFullYear();
+// ===== Timers (header) =====
+const nameEl=$("#name"), dateLbl=$("#dateLbl"), dateText=$("#dateText"), loveNote=$("#loveNote");
+if(nameEl){
+  nameEl.textContent=CONFIG.herName;
+  loveNote.textContent=CONFIG.loveNote;
+  const birthDate=new Date(CONFIG.birthday),
+        firstMet=new Date(CONFIG.firstMet),
+        datingStart=new Date(CONFIG.datingStart);
+  const thisYear=new Date().getFullYear();
+  const birthdayThisYear=new Date(thisYear,11,31,0,0,0);
+  const label=birthdayThisYear.toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  dateLbl.textContent=label; dateText.textContent=label;
+  $("#age").textContent=thisYear-birthDate.getFullYear();
 
   const lifeTimer=$("#lifeTimer"), ageYMD=$("#ageYMD"),
         datingTimer=$("#datingTimer"), metTimer=$("#metTimer");
@@ -87,34 +89,34 @@ if (nameEl){
     return {y,m,d};
   }
   function renderTimers(){
-    const now = new Date();
-    const lifeMs = now - birthDate;
-    const d = Math.floor(lifeMs/86400000);
-    const h = Math.floor((lifeMs%86400000)/3600000);
-    const mi= Math.floor((lifeMs%3600000)/60000);
-    const s = Math.floor((lifeMs%60000)/1000);
-    lifeTimer.innerHTML = `<div class="dd"><b>${pad(d)}</b><span>Hari</span></div>
+    const now=new Date();
+    const lifeMs=now-birthDate;
+    const d=Math.floor(lifeMs/86400000);
+    const h=Math.floor((lifeMs%86400000)/3600000);
+    const mi=Math.floor((lifeMs%3600000)/60000);
+    const s=Math.floor((lifeMs%60000)/1000);
+    lifeTimer.innerHTML=`<div class="dd"><b>${pad(d)}</b><span>Hari</span></div>
       <div class="dd"><b>${pad(h)}</b><span>Jam</span></div>
       <div class="dd"><b>${pad(mi)}</b><span>Menit</span></div>
       <div class="dd"><b>${pad(s)}</b><span>Detik</span></div>`;
     const {y,m,d:dd}=diffYMD(birthDate,now);
-    ageYMD.innerHTML = `<div class="dd"><b>${pad(y)}</b><span>Tahun</span></div>
+    ageYMD.innerHTML=`<div class="dd"><b>${pad(y)}</b><span>Tahun</span></div>
       <div class="dd"><b>${pad(m)}</b><span>Bulan</span></div>
       <div class="dd"><b>${pad(dd)}</b><span>Hari</span></div>`;
-    const datingMs = now - datingStart;
-    const dtD=Math.floor(datingMs/86400000);
-    const dtH=Math.floor((datingMs%86400000)/3600000);
-    const dtM=Math.floor((datingMs%3600000)/60000);
-    const dtS=Math.floor((datingMs%60000)/1000);
+    const datingMs=now-datingStart;
+    const dtD=Math.floor(datingMs/86400000),
+          dtH=Math.floor((datingMs%86400000)/3600000),
+          dtM=Math.floor((datingMs%3600000)/60000),
+          dtS=Math.floor((datingMs%60000)/1000);
     datingTimer.innerHTML=`<div class="dd"><b>${pad(dtD)}</b><span>Hari</span></div>
       <div class="dd"><b>${pad(dtH)}</b><span>Jam</span></div>
       <div class="dd"><b>${pad(dtM)}</b><span>Menit</span></div>
       <div class="dd"><b>${pad(dtS)}</b><span>Detik</span></div>`;
-    const metMs = now - firstMet;
-    const mtD=Math.floor(metMs/86400000);
-    const mtH=Math.floor((metMs%86400000)/3600000);
-    const mtM=Math.floor((metMs%3600000)/60000);
-    const mtS=Math.floor((metMs%60000)/1000);
+    const metMs=now-firstMet;
+    const mtD=Math.floor(metMs/86400000),
+          mtH=Math.floor((metMs%86400000)/3600000),
+          mtM=Math.floor((metMs%3600000)/60000),
+          mtS=Math.floor((metMs%60000)/1000);
     metTimer.innerHTML=`<div class="dd"><b>${pad(mtD)}</b><span>Hari</span></div>
       <div class="dd"><b>${pad(mtH)}</b><span>Jam</span></div>
       <div class="dd"><b>${pad(mtM)}</b><span>Menit</span></div>
@@ -123,9 +125,9 @@ if (nameEl){
   renderTimers(); setInterval(renderTimers,1000);
 }
 
-// ===== GALERI =====
+// ===== Galeri =====
 const galStories=$("#galStories");
-if (galStories){
+if(galStories){
   CONFIG.galleryInfo.slice(0,8).forEach(g=>{
     const fig=el('figure',{className:'story'});
     const img=el('img',{src:g.src,alt:'kenangan',loading:'lazy',decoding:'async'});
@@ -134,13 +136,13 @@ if (galStories){
   });
 }
 
-// ===== MUSIC =====
+// ===== Musik =====
 const audio=$("#bgm"), btnPlay=$("#btnPlay");
 if(btnPlay && audio){
   let started=false, playing=false;
   btnPlay.addEventListener('click',async()=>{
     try{
-      if(!started){ audio.currentTime = CONFIG.bgmStartSeconds||0; started=true; }
+      if(!started){ audio.currentTime=CONFIG.bgmStartSeconds||0; started=true; }
       if(!playing){ await audio.play(); btnPlay.textContent='⏸️ Hentikan Musik'; }
       else { audio.pause(); btnPlay.textContent='▶️ Putar Musik'; }
       playing=!playing;
@@ -148,7 +150,7 @@ if(btnPlay && audio){
   });
 }
 
-// ===== UCAPAN POPUP =====
+// ===== Ucapan Popup =====
 const wishDlg=$("#wishDlg"), btnOpenWish=$("#btnOpenWish"), btnCloseWish=$("#btnCloseWish"), wishText=$("#wishText");
 if(wishDlg && btnOpenWish && btnCloseWish && wishText){
   wishText.textContent=CONFIG.birthdayWish;
@@ -157,7 +159,7 @@ if(wishDlg && btnOpenWish && btnCloseWish && wishText){
   wishDlg.addEventListener('click',e=>{ if(e.target===wishDlg) wishDlg.close?.(); });
 }
 
-// ===== HEARTS / PETALS =====
+// ===== Petals =====
 const hv=document.getElementById('hearts'), hx=hv.getContext('2d');
 const DPR=Math.min(window.devicePixelRatio||1,1.25);
 function resizeHearts(){
@@ -171,7 +173,7 @@ function drawPetal(x,y,s,r){
   hx.save(); hx.translate(x,y); hx.rotate(r); hx.scale(s/20,s/20);
   hx.beginPath(); hx.moveTo(0,0); hx.bezierCurveTo(6,-6,14,-6,16,0); hx.bezierCurveTo(14,6,6,6,0,0);
   hx.closePath(); hx.fillStyle=['#f9a8d4','#fecaca','#fce7f3'][Math.floor(Math.random()*3)];
-  hx.globalAlpha=0.9; hx.fill(); hx.restore();
+  hx.globalAlpha=.9; hx.fill(); hx.restore();
 }
 function petalsRain(){
   const W=hv.width/DPR;
@@ -188,19 +190,19 @@ function petalsLoop(){
   if(petals.length) petalsId=requestAnimationFrame(petalsLoop); else { cancelAnimationFrame(petalsId); petalsId=null; }
 }
 
-// ===== PHOTO BOOTH (3 SLOT) =====
+// ===== Photo Booth 3-slot =====
 const OVERLAY_SRC=CONFIG.overlaySrc, FRAME_PCTS=CONFIG.frameRects;
 const frameCanvas=$("#frameCanvas"), fctx=frameCanvas.getContext('2d');
 const resultWrap=$("#resultWrap"), btnDownload=$("#btnDownload"), btnBackChoose=$("#btnBackChoose");
 const choiceRow=$("#choiceRow"), btnCamFlow=$("#btnCamFlow"), btnUploadFlow=$("#btnUploadFlow");
-const boothWrap=$("#boothWrap"), cam=$("#cam"), camTimer=$("#camTimer");
-const btnStartCam=$("#btnStartCam"), btnFlip=$("#btnFlip"), btnAutoShot=$("#btnAutoShot"),
-      btnReset=$("#btnReset"), btnConfirmCam=$("#btnConfirmCam");
+const boothWrap=$("#boothWrap"), cam=$("#cam"), videoWrap=$("#videoWrap"), countOverlay=$("#countOverlay");
+const btnStartCam=$("#btnStartCam"), btnFlip=$("#btnFlip"), btnMirror=$("#btnMirror"), btnAutoShot=$("#btnAutoShot"),
+      btnReset=$("#btnReset"), btnConfirmCam=$("#btnConfirmCam"), captureDelay=$("#captureDelay");
 const slotGrid=$("#slotGrid");
-const slotCanvases = slotGrid ? Array.from(slotGrid.querySelectorAll('canvas.slot')) : [];
+const slotCanvases= slotGrid? Array.from(slotGrid.querySelectorAll('canvas.slot')) : [];
 const uploadWrap=$("#uploadWrap"), files3=$("#files3"), btnClearUpload=$("#btnClearUpload"),
       btnConfirmUpload=$("#btnConfirmUpload"), uploadGrid=$("#uploadGrid");
-const upCanvases = uploadGrid ? Array.from(uploadGrid.querySelectorAll('canvas.upslot')) : [];
+const upCanvases= uploadGrid? Array.from(uploadGrid.querySelectorAll('canvas.upslot')) : [];
 const confirmDlg=$("#confirmDlg"), confirmMsg=$("#confirmMsg");
 const retakeDlg=$("#retakeDlg"), retakeMsg=$("#retakeMsg");
 const shutterSound=$("#shutterSound");
@@ -209,10 +211,10 @@ let overlayImg=null, overlayReady=false;
 let images=[null,null,null];
 let stream=null;
 let facing='user';
-let cameraStartTime=0;
-let timerInterval=null;
+let mirrored=false;
 let captureInProgress=false;
 
+// Helpers UI
 function show(el){ el?.classList.remove('hidden'); el?.setAttribute('aria-hidden','false'); }
 function hide(el){ el?.classList.add('hidden'); el?.setAttribute('aria-hidden','true'); }
 function enable(...els){ els.forEach(e=>e&&(e.disabled=false)); }
@@ -236,7 +238,12 @@ function coverDrawTo(canvas,img){
   const ih=img.naturalHeight||img.videoHeight||img.height;
   const s=Math.max(W/iw,H/ih); const dw=iw*s, dh=ih*s;
   const dx=(W-dw)/2, dy=(H-dh)/2;
-  ctx.clearRect(0,0,W,H); ctx.drawImage(img,dx,dy,dw,dh);
+  ctx.clearRect(0,0,W,H);
+  if(mirrored){
+    ctx.save(); ctx.translate(W,0); ctx.scale(-1,1);
+    ctx.drawImage(img,dx,dy,dw,dh);
+    ctx.restore();
+  } else ctx.drawImage(img,dx,dy,dw,dh);
 }
 function ensureOverlay(){
   if(overlayImg) return;
@@ -250,7 +257,8 @@ function rectPx([x,y,w,h]){
 }
 function toChoice(){
   hide(boothWrap); hide(uploadWrap); hide(resultWrap); show(choiceRow);
-  stopCam(); images=[null,null,null]; disable(btnConfirmCam,btnReset,btnFlip,btnAutoShot);
+  stopCam(); images=[null,null,null];
+  disable(btnConfirmCam,btnReset,btnFlip,btnMirror,btnAutoShot,captureDelay);
   resetPreviews(); btnDownload.style.opacity='.6'; btnDownload.style.pointerEvents='none'; btnDownload.removeAttribute('href');
 }
 
@@ -258,88 +266,113 @@ function toChoice(){
 async function startCam(){
   try{
     stopCam();
-    stream = await navigator.mediaDevices.getUserMedia({
-      video:{ facingMode:facing, width:{ideal:720}, height:{ideal:960} }, audio:false
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode:facing, width:{ideal:720}, height:{ideal:960} },
+      audio:false
     });
     cam.srcObject=stream;
-    cameraStartTime=Date.now(); startTimerOverlay();
-    enable(btnFlip,btnAutoShot,btnReset);
-    showToast('Kamera aktif. Klik "Ambil 3 Foto ▶️" untuk mulai.');
+    enable(btnFlip,btnMirror,btnAutoShot,btnReset,captureDelay);
+    showToast('Kamera aktif. Pilih timer lalu klik Ambil 3 Foto ▶️');
   }catch(e){
-    showToast('Tidak bisa membuka kamera. Izin atau HTTPS diperlukan.');
+    showToast('Tidak bisa membuka kamera. Pastikan izin & HTTPS.');
   }
 }
 function stopCam(){
   if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
-  cam.srcObject=null; stopTimerOverlay();
-}
-function startTimerOverlay(){ updateCamTimer(); timerInterval=setInterval(updateCamTimer,1000); }
-function stopTimerOverlay(){ clearInterval(timerInterval); timerInterval=null; camTimer.textContent='00:00'; }
-function updateCamTimer(){
-  const elapsed=Date.now()-cameraStartTime;
-  const sec=Math.floor(elapsed/1000);
-  camTimer.textContent=`${pad(Math.floor(sec/60))}:${pad(sec%60)}`;
+  cam.srcObject=null;
 }
 
-// Auto Capture 3
-async function autoCaptureSequence(){
+// Countdown
+function startCountdown(seconds, onDone){
+  countOverlay.textContent='';
+  countOverlay.style.opacity='1';
+  let current=seconds;
+  const tick=()=>{
+    countOverlay.textContent=current;
+    if(current<=0){
+      countOverlay.textContent='';
+      countOverlay.style.opacity='0';
+      onDone();
+    } else {
+      current--;
+      setTimeout(tick,1000);
+    }
+  };
+  tick();
+}
+
+// Capture satu frame
+function captureFrame(){
+  const off=document.createElement('canvas'); off.width=720; off.height=960;
+  const ox=off.getContext('2d');
+  const iw=cam.videoWidth, ih=cam.videoHeight;
+  const s=Math.max(off.width/iw,off.height/ih);
+  const dw=iw*s, dh=ih*s, dx=(off.width-dw)/2, dy=(off.height-dh)/2;
+  if(mirrored){
+    ox.translate(off.width,0); ox.scale(-1,1);
+  }
+  ox.drawImage(cam,dx,dy,dw,dh);
+  const im=new Image();
+  im.src=off.toDataURL('image/png');
+  return im;
+}
+
+// Auto capture 3
+function autoCaptureSequence(){
   if(!stream || !cam.videoWidth){ showToast('Kamera belum aktif.'); return; }
   if(captureInProgress) return;
   captureInProgress=true;
-  let idx=0;
-  disable(btnAutoShot);
-  const videoWrap=document.querySelector('.video-wrap');
-  const doCapture=()=>{
-    if(idx>=3){ captureInProgress=false; enable(btnConfirmCam); showToast('3 foto selesai. Klik gambar untuk retake atau Lanjutkan.'); return; }
-    const off=document.createElement('canvas'); off.width=720; off.height=960;
-    const ox=off.getContext('2d');
-    const iw=cam.videoWidth, ih=cam.videoHeight;
-    const s=Math.max(off.width/iw,off.height/ih);
-    const dw=iw*s, dh=ih*s, dx=(off.width-dw)/2, dy=(off.height-dh)/2;
-    ox.drawImage(cam,dx,dy,dw,dh);
-    const im=new Image();
-    im.onload=()=>{
-      images[idx]=im;
-      coverDrawTo(slotCanvases[idx],im);
-      slotCanvases[idx].classList.add('captured');
-      videoWrap.classList.add('flash-effect','shake-effect');
-      setTimeout(()=>videoWrap.classList.remove('flash-effect','shake-effect'),260);
-      try{ shutterSound.currentTime=0; shutterSound.play().catch(()=>{}); }catch{}
-      idx++;
-      setTimeout(doCapture,700);
+  disable(btnAutoShot,btnFlip,btnMirror,captureDelay);
+  const delaySec = Number(captureDelay.value||3);
+  startCountdown(delaySec, ()=>{
+    let idx=0;
+    const sequence=()=>{
+      if(idx>=3){
+        captureInProgress=false;
+        enable(btnConfirmCam,btnReset,btnFlip,btnMirror,captureDelay);
+        showToast('3 foto selesai. Klik foto untuk retake atau Lanjutkan.');
+        return;
+      }
+      const im=captureFrame();
+      im.onload=()=>{
+        images[idx]=im; coverDrawTo(slotCanvases[idx],im);
+        slotCanvases[idx].classList.add('captured');
+        applyShotEffects();
+        idx++;
+        setTimeout(sequence,CONFIG.autoIntervalMs);
+      };
     };
-    im.src=off.toDataURL('image/png');
-  };
-  doCapture();
+    sequence();
+  });
 }
 
-// Retake lewat klik slot
+// Efek shot
+function applyShotEffects(){
+  videoWrap.classList.add('flash-effect','shake-effect');
+  setTimeout(()=>videoWrap.classList.remove('flash-effect','shake-effect'),260);
+  try{ shutterSound.currentTime=0; shutterSound.play().catch(()=>{}); }catch{}
+}
+
+// Retake
 slotGrid?.addEventListener('click',e=>{
   const c=e.target.closest('canvas.slot'); if(!c) return;
   const i=Number(c.dataset.i);
-  if(!images[i]){ showToast('Belum ada foto di slot ini.'); return; }
+  if(!images[i]){ showToast('Slot ini belum ada foto.'); return; }
   retakeMsg.textContent=`Retake foto slot ${i+1}?`;
   retakeDlg.showModal();
   retakeDlg.addEventListener('close',function handler(){
     retakeDlg.removeEventListener('close',handler);
     if(retakeDlg.returnValue==='do'){
-      if(!stream || !cam.videoWidth){ showToast('Kamera tidak aktif. Nyalakan kamera dulu.'); return; }
-      const off=document.createElement('canvas'); off.width=720; off.height=960;
-      const ox=off.getContext('2d');
-      const iw=cam.videoWidth, ih=cam.videoHeight;
-      const s=Math.max(off.width/iw,off.height/ih);
-      const dw=iw*s, dh=ih*s, dx=(off.width-dw)/2, dy=(off.height-dh)/2;
-      ox.drawImage(cam,dx,dy,dw,dh);
-      const im=new Image();
-      im.onload=()=>{
-        images[i]=im; coverDrawTo(c,im);
-        showToast(`Foto slot ${i+1} diperbarui.`);
-      };
-      im.src=off.toDataURL('image/png');
-      const videoWrap=document.querySelector('.video-wrap');
-      videoWrap.classList.add('flash-effect','shake-effect');
-      setTimeout(()=>videoWrap.classList.remove('flash-effect','shake-effect'),260);
-      try{ shutterSound.currentTime=0; shutterSound.play().catch(()=>{}); }catch{}
+      if(!stream || !cam.videoWidth){ showToast('Kamera tidak aktif.'); return; }
+      const delaySec=Number(captureDelay.value||3);
+      startCountdown(delaySec, ()=>{
+        const im=captureFrame();
+        im.onload=()=>{
+          images[i]=im; coverDrawTo(c,im);
+          applyShotEffects();
+          showToast(`Foto slot ${i+1} diperbarui.`);
+        };
+      });
     }
   });
 });
@@ -376,13 +409,20 @@ btnClearUpload?.addEventListener('click',()=>{
   images=[null,null,null]; resetPreviews(); disable(btnConfirmUpload);
 });
 
-// Balik kamera
+// Flip facing
 btnFlip?.addEventListener('click',()=>{
-  facing = (facing==='user'?'environment':'user');
+  facing=(facing==='user'?'environment':'user');
   startCam();
 });
 
-// Tombol alur
+// Mirror
+btnMirror?.addEventListener('click',()=>{
+  mirrored=!mirrored;
+  if(mirrored) videoWrap.classList.add('mirrored'); else videoWrap.classList.remove('mirrored');
+  showToast(mirrored?'Mode mirror ON':'Mode mirror OFF');
+});
+
+// Alur tombol
 btnCamFlow?.addEventListener('click',()=>{
   ensureOverlay(); resetPreviews();
   hide(choiceRow); hide(uploadWrap); hide(resultWrap); show(boothWrap);
@@ -394,23 +434,26 @@ btnUploadFlow?.addEventListener('click',()=>{
   stopCam();
 });
 
-// Capture sequence
+// Auto shot
 btnAutoShot?.addEventListener('click',autoCaptureSequence);
 
-// Reset dengan konfirmasi
+// Reset
 btnReset?.addEventListener('click',()=>{
   askConfirm('Reset semua foto yang sudah diambil?',()=>{
-    images=[null,null,null]; resetPreviews(); disable(btnConfirmCam); enable(btnAutoShot); showToast('Sudah direset.');
+    images=[null,null,null]; resetPreviews();
+    disable(btnConfirmCam);
+    enable(btnAutoShot);
+    showToast('Sudah direset.');
   });
 });
 
-// Lanjutkan (komposisi)
+// Lanjutkan
 btnConfirmCam?.addEventListener('click',()=>{
-  if(!images.every(Boolean)){ showToast('Belum ada 3 foto lengkap.'); return; }
+  if(!images.every(Boolean)){ showToast('Belum 3 foto lengkap.'); return; }
   askConfirm('Sudah yakin dengan 3 foto ini?',composeStrip);
 });
 
-// Konfirmasi upload flow
+// Konfirmasi upload
 btnConfirmUpload?.addEventListener('click',()=>{
   if(!images.every(Boolean)){ showToast('Lengkapi 3 foto dulu.'); return; }
   askConfirm('Gunakan 3 foto ini untuk template?',composeStrip);
@@ -420,7 +463,7 @@ btnConfirmUpload?.addEventListener('click',()=>{
 btnBackChoose?.addEventListener('click',toChoice);
 
 // Dialog konfirmasi generik
-function askConfirm(message, onOk){
+function askConfirm(message,onOk){
   confirmMsg.textContent=message;
   confirmDlg.showModal();
   confirmDlg.addEventListener('close',function handler(){
@@ -429,17 +472,24 @@ function askConfirm(message, onOk){
   });
 }
 
-// Komposisi strip 3-up
+// Komposisi strip
 function composeStrip(){
   if(!overlayReady){ showToast('Overlay belum siap.'); return; }
   fctx.clearRect(0,0,frameCanvas.width,frameCanvas.height);
   FRAME_PCTS.forEach((r,i)=>{
-    const [x,y,w,h]=rectPx(r), img=images[i]; if(!img) return;
+    const [x,y,w,h]=rectPx(r);
+    const img=images[i]; if(!img) return;
     const iw=img.naturalWidth, ih=img.naturalHeight;
     const s=Math.max(w/iw,h/ih);
     const dw=iw*s, dh=ih*s;
     const dx=x+(w-dw)/2, dy=y+(h-dh)/2;
-    fctx.drawImage(img,dx,dy,dw,dh);
+    if(mirrored){
+      fctx.save(); fctx.translate(x+w,0); fctx.scale(-1,1);
+      fctx.drawImage(img,dx,dy,dw,dh);
+      fctx.restore();
+    } else {
+      fctx.drawImage(img,dx,dy,dw,dh);
+    }
   });
   fctx.drawImage(overlayImg,0,0,frameCanvas.width,frameCanvas.height);
   hide(boothWrap); hide(uploadWrap); show(resultWrap);
@@ -448,13 +498,13 @@ function composeStrip(){
   stopCam();
 }
 
-// ===== SHORTCUT BUTTON =====
+// Shortcut ke Photo Booth
 $("#btnBooth")?.addEventListener('click',()=>$("#frame")?.scrollIntoView({behavior:'smooth'}));
 
-// ===== SELF TEST =====
-console.log('[BirthdayWeb] camera 3-up ready with Template-Foto.png');
+// Self test
+console.log('[BirthdayWeb] camera 3-up + countdown + mirror ready');
 
-// ===== GATE =====
+// Gate
 const GKEY='bd-gate-ok-v4', PASS='290824';
 function showGate(){ $('#gate').style.display='flex'; }
 function hideGate(){ $('#gate').style.display='none'; }
