@@ -1,4 +1,5 @@
 // ===== CONFIG =====
+
 const CONFIG = {
   herName: "Adellia",
   birthday: "2004-12-31T00:00:00+07:00",
