@@ -13,7 +13,6 @@
 <body>
   <!-- Kanvas efek -->
   <canvas id="hearts" aria-hidden="true"></canvas>
-  <canvas id="confetti" aria-hidden="true"></canvas>
 
   <!-- HERO -->
   <header>
@@ -28,20 +27,27 @@
       </p>
 
       <div class="timers split">
-        <div class="timer-col">
-          <p class="muted small title-col">Telah menempuh hidup selama</p>
-            <div class="countdown" id="lifeTimer" aria-label="Total hidup dalam hari jam menit dan detik"></div>
-          <p class="muted small" style="margin-top:8px">atau</p>
-            <div class="countdown" id="ageYMD" aria-label="Usia dalam tahun bulan hari"></div>
-        </div>
-        <div class="timer-col">
-          <p class="muted small title-col">Sejak kita resmi berpacaran</p>
-            <div class="countdown" id="datingTimer" aria-label="Hari sejak jadian"></div>
-          <p class="muted small title-col" style="margin-top:18px">Sejak pertama kali kita saling mengenal</p>
-            <div class="countdown" id="metTimer" aria-label="Hari sejak pertama kenal"></div>
-        </div>
-      </div>
+  <!-- KIRI -->
+  <div class="timer-col">
+    <p class="muted small title-col">Telah menempuh hidup selama</p>
+    <div class="countdown" id="lifeTimer" aria-label="Total hidup dalam hari jam menit dan detik"></div>
 
+    <p class="muted small" style="margin-top:10px">atau</p>
+
+    <p class="muted small title-col" style="margin-top:14px">Telah menempuh hidup selama</p>
+    <div class="countdown" id="lifeTimerDays" aria-label="Tahun, Bulan, Hari"></div>
+    <div class="countdown" id="lifeTimerTime" aria-label="Jam, Menit, Detik"></div>
+  </div>
+
+  <!-- KANAN -->
+  <div class="timer-col">
+    <p class="muted small title-col">Sejak kita memulai kisah ini</p>
+    <div class="countdown" id="datingTimer" aria-label="Hari sejak jadian"></div>
+
+    <p class="muted small title-col" style="margin-top:18px">Sejak takdir mempertemukan kita</p>
+    <div class="countdown" id="metTimer" aria-label="Hari sejak pertama kenal"></div>
+  </div>
+</div>
       <div class="cta">
         <button class="btn primary" id="btnPlay">▶️ Putar Musik</button>
         <button class="btn primary" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">
@@ -51,6 +57,19 @@
       </div>
     </div>
   </header>
+
+        <!-- </div>
+        <div class="timer-col">
+          <p class="muted small title-col">Sejak kita memulai kisah ini</p>
+            <div class="countdown" id="datingTimer" aria-label="Hari sejak jadian"></div>
+          <p class="muted small title-col" style="margin-top:18px">Sejak takdir mempertemukan kita</p>
+            <div class="countdown" id="metTimer" aria-label="Hari sejak pertama kenal"></div>
+        </div> -->
+        
+
+      <!-- </div> -->
+
+
 
   <main>
     <!-- SURAT KECIL -->
@@ -97,8 +116,9 @@
         <div id="boothWrap" class="booth hidden" aria-hidden="true">
           <div class="booth-left">
             <div class="video-wrap" id="videoWrap">
-              <video id="cam" playsinline autoplay muted></video>
-              <div id="countOverlay"></div>
+            <video id="cam" playsinline autoplay muted style="display:none;"></video>
+            <canvas id="camPreview" width="1062" height="487" aria-label="Preview kamera (crop sama seperti overlay)"></canvas>
+            <div id="countOverlay"></div>
             </div>
             <div class="booth-ctrl">
               <button class="btn primary" id="btnStartCam">Nyalakan Kamera</button>
@@ -116,9 +136,9 @@
           </div>
           <div class="booth-right">
             <div id="slotGrid" class="thumbs" aria-label="Hasil foto sementara">
-              <canvas class="slot" data-i="0" width="240" height="320" aria-label="Slot 1"></canvas>
-              <canvas class="slot" data-i="1" width="240" height="320" aria-label="Slot 2"></canvas>
-              <canvas class="slot" data-i="2" width="240" height="320" aria-label="Slot 3"></canvas>
+              <canvas class="slot" data-i="0" width="320" height="147" aria-label="Slot 1"></canvas>
+              <canvas class="slot" data-i="1" width="320" height="147" aria-label="Slot 2"></canvas>
+              <canvas class="slot" data-i="2" width="320" height="147" aria-label="Slot 3"></canvas>
             </div>
             <p class="muted">Klik foto untuk retake (muncul konfirmasi & countdown).</p>
           </div>
@@ -135,9 +155,9 @@
           </div>
           <div class="booth-right">
             <div id="uploadGrid" class="thumbs" aria-label="Slot foto upload">
-              <canvas class="upslot" data-i="0" width="240" height="320" aria-label="Upload slot 1"></canvas>
-              <canvas class="upslot" data-i="1" width="240" height="320" aria-label="Upload slot 2"></canvas>
-              <canvas class="upslot" data-i="2" width="240" height="320" aria-label="Upload slot 3"></canvas>
+              <canvas class="slot" data-i="0" width="320" height="180" aria-label="Upload slot 1"></canvas>
+              <canvas class="slot" data-i="1" width="320" height="180" aria-label="Upload slot 2"></canvas>
+              <canvas class="slot" data-i="2" width="320" height="180" aria-label="Upload slot 3"></canvas>
             </div>
             <p class="muted">Pilih tepat 3 foto. Klik untuk mengganti.</p>
           </div>
@@ -170,7 +190,7 @@
             <a class="btn primary" id="btnDownload" download="moment-3frame.png" href="#" style="opacity:.6;pointer-events:none">Download</a>
             <button class="btn" id="btnBackChoose">Kembali</button>
           </div>
-          <p class="muted">Template overlay: <code>assets/overlays/Template-Foto.png</code>.</p>
+          <!-- <p class="muted">Template overlay: <code>assets/overlays/Template-Foto.png</code>.</p> -->
         </div>
       </div>
     </section>

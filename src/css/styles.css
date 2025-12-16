@@ -11,6 +11,8 @@
   --brand:#f472b6;
   --brand-2:#60a5fa;
   --accent:#fcd34d;
+  --slot-aspect: 2.18 / 1;
+
 }
 
 /* =========================================================
@@ -125,51 +127,85 @@ h1{
 ========================================================= */
 .timers.split{
   display:grid;
+  grid-template-columns: 1fr 1fr; /* kiri - kanan */
   gap:32px;
   margin-top:26px;
+  align-items:start;
 }
 
-.timer-col{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+.timer-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.title-col{
-  font-weight:600;
-  letter-spacing:.3px;
-  color:var(--muted);
-  font-size:.8rem;
-  text-transform:uppercase;
+.title-col {
+  font-weight: 600;
+  letter-spacing: .3px;
+  color: var(--muted);
+  font-size: .8rem;
+  text-transform: uppercase;
 }
 
-.countdown{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin-top:10px;
+.countdown {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
 }
 
-.dd{
-  min-width:74px;
-  text-align:center;
-  padding:10px 8px;
-  border-radius:12px;
-  background:#0b1220;
-  border:1px solid #334155;
+.dd {
+  min-width: 74px;
+  text-align: center;
+  padding: 10px 8px;
+  border-radius: 12px;
+  background: #0b1220;
+  border: 1px solid #334155;
 }
 
-.dd b{ font-size:22px; display:block; }
-.dd span{ display:block; font-size:11px; color:var(--muted); margin-top:4px; }
+.dd b {
+  font-size: 22px;
+  display: block;
+}
 
-@media(min-width:900px){
-  .timers.split{
-    grid-template-columns:1fr 1fr;
-    align-items:start;
-    justify-items:center;
+.dd span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Menambahkan styling untuk membagi dua baris */
+#lifeTimerDays {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#lifeTimerTime {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px; /* Menambahkan jarak antara kedua baris */
+}
+
+/* Responsif untuk tampilan kecil */
+@media (max-width: 600px) {
+  .timers.split {
+    grid-template-columns: 1fr; /* Kolom tunggal untuk tampilan mobile */
+  }
+
+  .dd b {
+    font-size: 18px; /* Ukuran font lebih kecil di perangkat kecil */
+  }
+
+  .countdown {
+    flex-direction: column;
+    gap: 16px;
   }
 }
+
 
 /* =========================================================
    CTA BUTTONS
@@ -310,23 +346,45 @@ p{ color:#e2e8f0; line-height:1.55; }
 .booth-left{ display:grid; gap:16px; align-content:start; }
 .booth-right{ display:grid; gap:12px; align-content:start; }
 
+/* 1) preview kamera ikut rasio slot overlay */
 .video-wrap{
-  position:relative;
   width:100%;
-  max-width:420px;
-  aspect-ratio:3/4;
+  position: relative; /* WAJIB utk #countOverlay */
+  max-width:520px;
+  aspect-ratio: auto;   /* lebih nyaman dilihat */
   background:#0b1220;
   border:1px solid #334155;
   border-radius:18px;
   overflow:hidden;
 }
 
-.video-wrap video{
-  width:100%; height:100%;
-  object-fit:cover;
+#camPreview{
+  width:100%;
+  height:auto;
   display:block;
-  transition:transform .3s;
 }
+
+/* 3) thumbnail slot: pakai rasio yang sama */
+.thumbs{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr)); /* 2 kolom seperti screenshot */
+  gap:12px;
+  align-items:start;
+}  
+
+@media (max-width:900px){
+  .thumbs{ grid-template-columns: 1fr; }
+}
+
+/* .thumbs canvas.slot{
+  width:100%;
+  height:auto;
+  aspect-ratio: 3.874 / 1;  /* sama seperti preview */
+  /* display:block;
+  border-radius:12px;
+  background:#0b1220;
+} */ 
+
 
 .video-wrap.mirrored video{ transform:scaleX(-1); }
 
@@ -369,21 +427,21 @@ p{ color:#e2e8f0; line-height:1.55; }
   align-items:center;
 }
 
-.thumbs{
+/* .thumbs{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
   gap:12px;
   margin-top:4px;
-}
+  align-items: start; /* penting */
+  /* } */
 
-.slot,.upslot{
-  width:100%; height:auto;
-  aspect-ratio:3/4;
+.slot{
+  width:100%;
+  height:auto;
+  aspect-ratio: var(--slot-aspect);
   border:1px dashed #334155;
   border-radius:12px;
   background:#0b1220;
-  transition:outline .25s ease, box-shadow .25s;
-  cursor:pointer;
 }
 
 .slot.captured:hover,
@@ -549,5 +607,8 @@ footer{
 .w-full{ width:100%; }
 .opacity-0{ opacity:0 !important; }
 .nowrap{ white-space:nowrap; }
+
+
+
 
 /* End of stylesheet */
