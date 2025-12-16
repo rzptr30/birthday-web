@@ -191,20 +191,55 @@ h1{
 }
 
 /* Responsif untuk tampilan kecil */
-@media (max-width: 600px) {
-  .timers.split {
-    grid-template-columns: 1fr; /* Kolom tunggal untuk tampilan mobile */
+@media (max-width: 600px){
+
+  /* 1) Timer kiri & kanan dibuat NUMPuk (scroll ke bawah) */
+  .timers.split{
+    grid-template-columns: 1fr !important;
+    gap: 22px !important;
   }
 
-  .dd b {
-    font-size: 18px; /* Ukuran font lebih kecil di perangkat kecil */
+  .timer-col{
+    width: 100%;
+    align-items: center;
   }
 
-  .countdown {
-    flex-direction: column;
-    gap: 16px;
+  /* 2) Kotak countdown tetap rapi dalam baris (bukan 1-1 ke bawah) */
+  .countdown{
+    display: grid !important;
+    gap: 10px;
+    justify-content: center;
   }
+
+  .dd{
+    min-width: 0 !important;
+    width: 72px; /* konsisten */
+  }
+
+  /* lifeTimer 4 item -> 2 kolom */
+  #lifeTimer{
+    grid-template-columns: repeat(2, 72px);
+  }
+
+  /* 3 item -> 3 kolom */
+  #lifeTimerDays,
+  #lifeTimerTime{
+    grid-template-columns: repeat(3, 72px);
+  }
+
+  /* dating & met 4 item -> 2x2 */
+  #datingTimer,
+  #metTimer{
+    grid-template-columns: repeat(2, 72px);
+  }
+
+  /* Hapus aturan yang bikin countdown jadi 1 kolom */
+  /* (kalau kamu punya ini di CSS lama) */
+  /* .countdown { flex-direction: column; } */
 }
+
+
+
 
 
 /* =========================================================
