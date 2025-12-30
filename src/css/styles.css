@@ -392,6 +392,17 @@ p{ color:#e2e8f0; line-height:1.55; }
   border-radius:18px;
   overflow:hidden;
 }
+/* Batasi tinggi preview di mobile agar tidak terlalu zoom */
+@media (max-width:900px){
+  .video-wrap{
+    max-height: 280px; /* batasi tinggi di mobile */
+  }
+  
+  #camPreview{
+    max-height: 280px;
+    object-fit: contain; /* agar tidak crop berlebihan */
+  }
+}
 
 #camPreview{
   width:100%;
