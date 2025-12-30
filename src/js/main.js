@@ -9,16 +9,13 @@ const CONFIG = {
     { src:"assets/gallery/2.jpeg", caption:"Setelah sempat asing, kita ketemu lagi. Aku sengaja cari momen lewat acara kampus—cuma biar bisa lihat kamu dan mulai ngobrol lagi." },
     { src:"assets/gallery/3.jpeg", caption:"NAHHH FOTO INIIII ADALAH FOTO PERTAMA KITA SETELAH OFFICIAL YUHUUUU" },
     { src:"assets/gallery/4.jpg", caption:"Foto ini sebenarnya bikin sedih—coba tebak kenapa. Tapi justru dari momen ini, kisah kita perlahan menemukan jalannya sampai bisa seperti sekarang." },
-    { src:"assets/gallery/5.jpg", caption:"Hari jajan favorit, sederhana tapi hangat sekali." },
+    { src:"assets/gallery/5.jpeg", caption:"Coba tebak, ini momen apa hayoooo? Cluenya: nggak ramai, nggak spesial di luar… tapiiiiii penting."},
     { src:"assets/gallery/6.jpg", caption:"DANNN INIIIIII, Pengalaman yang sangat terkesan karena kita akhirnya keluar kota bareng, jalan jalan jauh, meskipun ada beberapa kejadian tapi itu yang buat seru" }
   ],
-  loveNote: "Terima kasih sudah selalu sabar dan bikin aku merasa cukup.",
-  birthdayWish: `Selamat ulang tahun, sayang. Terima kasih sudah tumbuh dengan begitu indah.
-Semoga tahun ini jadi halaman penuh keberanian, tawa lepas, dan langkah yang yakin.
-Aku selalu mendukung mimpi-mimpumu; jangan ragu cerita kalau butuh sandaran.
-Terus jadi versi terbaik dari dirimu—yang hangat, perhatian, dan tulus.
-Kamu berharga, jauh lebih dari yang kadang kamu sadari.
-Peluk dari jauh sampai bisa kupeluk beneran. 🎂💞`,
+  loveNote: "Terima kasih yaa sudah selalu sabar dan bikin aku merasa cukup.",
+  birthdayWish: `hai hai haiiiii, HBD SAYANGGGGGG 🎉🎉🎉🎉🎉🎉YUHUUUU, SUDAH 21 TAHUN NIH YAAAA, Selamat ulang tahun yaaa jadiii aku mau ngomong apa ya iniii, doa baik yaaa yang pastinyaaaa, semoga di umur yang 21+ ini kamu bisa jadi lebih baik lagi walaupun skrg udah baik jadi nambah lagiiii, semoga apa yang kamu harapkan bisa tercapai, walaupun mungkin ga semua tapi pasti ada hikmah dari tiap hal tersebut, oiya habis ini magang yaaa, semoga magang nya lancarrrr, lingkungan di tempat nya baikkkk, pokoknya lancar deh buat magang nyaaaa, terusss semoga di tahun ini kamu lancar juga kuliahnya, dah mau skripsi nih yeeee, semoga lancar dan lulus tepat waktu atau lebih cepetttt, aku yakin semua usaha mu bakal berbuah manis nantinyaaaa, sehat sehat terus bub, bahagia terus jugaaa yaaaaaa, MAKASIII YAAAA BUBBBB buat selama iniii, makasi ga bosen ngingetin aku dan jangan pernah bosen sama aku jg yaaaa ehehehehehehe, jujur aku gatau ini mau isi apa lagi ya, karena aku kepikiran dengan sidangku besok heheheh, jadi ini dibuat di tgl 30 nya hehee, OIYAAAA sorryyy bgttt kalau tahun ini di ultah mu ga se spesial ituuuu karena ada kendala pada sesuatu hal lah itu lah, tapiii semoga tetep berkesan yaaa, mungkin ini ga seberapa tapi semoga kamu sukaaa, hehehehe mungkin itu aja deh yg disini yaaa,
+
+LOVEE YOUUU MUCH MORE BUBBB❤️‍🔥🩷❤️‍🔥🩷❤️❤️‍🔥🩷❤️💖💗💓`,
   bgmStartSeconds: 60,
   overlaySrc: "assets/overlays/Template-Foto.png",
 
@@ -852,18 +849,23 @@ function normalize(inp){
   return d;
 }
 
-// sessionStorage: setiap tab baru, harus input password lagi
-if (sessionStorage.getItem(GKEY) !== 'yes') showGate();
+// sessionStorage: setiap tab baru, harus input password lag
+showGate();
 
 function tryEnter(){
-  const v = normalize(document.getElementById('gateInput').value);
+  const input = document.getElementById('gateInput');
+  const v = normalize(input.value);
+
   if (v === PASS){
-    sessionStorage.setItem(GKEY,'yes');
     hideGate();
+    input.value = ''; // kosongkan setelah berhasil
   } else {
     showToast('Masih salah, coba lagi ya.');
+    input.value = ''; // opsional: kosongkan juga saat salah
+    input.focus();
   }
 }
+
 
 document.getElementById('gateBtn')?.addEventListener('click', tryEnter);
 document.getElementById('gateInput')?.addEventListener('keydown', e => { if(e.key==='Enter') tryEnter(); });
