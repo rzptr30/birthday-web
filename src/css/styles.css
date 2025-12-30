@@ -643,7 +643,9 @@ footer{
 .opacity-0{ opacity:0 !important; }
 .nowrap{ white-space:nowrap; }
 
-
+#about .muted {
+  color: var(--text);
+}
 
 
 /* End of stylesheet */

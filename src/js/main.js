@@ -860,7 +860,7 @@ function tryEnter(){
     hideGate();
     input.value = ''; // kosongkan setelah berhasil
   } else {
-    showToast('Masih salah, coba lagi ya.');
+    showToast('Kok bisa salah sih!?, kamua ga sayang aku ya🫵🏻😡.');
     input.value = ''; // opsional: kosongkan juga saat salah
     input.focus();
   }
